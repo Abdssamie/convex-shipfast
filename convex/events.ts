@@ -1,6 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+/**
+ * Retrieves all events for the authenticated user, sorted by date.
+ * 
+ * @returns Array of events sorted chronologically by date
+ * @throws Error if user is not authenticated
+ */
 export const list = query({
   args: {},
   handler: async (ctx) => {
