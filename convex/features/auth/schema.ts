@@ -23,6 +23,7 @@ export const tables = {
     bio: v.optional(v.union(v.null(), v.string())),
     description: v.optional(v.union(v.null(), v.string())),
     preferences: v.optional(v.union(v.null(), v.string())),
+    hasCompletedOnboarding: v.optional(v.union(v.null(), v.boolean())),
   })
     .index("email_name", ["email","name"])
     .index("name", ["name"])

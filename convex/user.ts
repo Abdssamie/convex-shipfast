@@ -117,3 +117,36 @@ export const deleteAccount = mutation({
     return { success: true };
   },
 });
+
+export const completeOnboarding = mutation({
+  args: {
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    preferences: v.optional(
+      v.object({
+        theme: v.optional(v.string()),
+        notifications: v.optional(v.boolean()),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+
+    await auth.api.updateUser({
+      headers,
+      body: {
+        ...(args.name !== undefined && { name: args.name }),
+        ...(args.image !== undefined && { image: args.image }),
+        ...(args.preferences !== undefined && { preferences: args.preferences }),
+        hasCompletedOnboarding: true,
+      },
+    });
+
+    return { success: true };
+  },
+});

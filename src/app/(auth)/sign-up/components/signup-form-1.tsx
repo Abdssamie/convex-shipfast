@@ -74,8 +74,9 @@ export function SignupForm1({
         return
       }
 
+      sessionStorage.setItem("verification-email", data.email)
       toast.success("Account created! Check your email to verify.")
-      router.push("/dashboard")
+      router.push("/verify-email-sent")
     } catch (error) {
       toast.error("An unexpected error occurred")
     } finally {

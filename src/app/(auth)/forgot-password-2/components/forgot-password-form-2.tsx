@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,7 @@ export function ForgotPasswordForm2({
 }: React.ComponentProps<"form">) {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,10 +26,9 @@ export function ForgotPasswordForm2({
         email,
         redirectTo: "/reset-password",
       })
-      toast.success("Password reset email sent! Check your inbox.")
+      router.push(`/reset-password-sent?email=${encodeURIComponent(email)}`)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to send reset email. Please try again.")
-    } finally {
       setIsLoading(false)
     }
   }

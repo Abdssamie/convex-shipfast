@@ -47,6 +47,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         bio: { type: "string", required: false },
         description: { type: "string", required: false },
         preferences: { type: "json", required: false },
+        hasCompletedOnboarding: { type: "boolean", required: false },
       },
     },
     emailVerification: {

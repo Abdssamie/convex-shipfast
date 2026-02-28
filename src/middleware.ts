@@ -51,6 +51,7 @@ export async function middleware(request: NextRequest) {
   
   // Protected routes - require session cookie
   const isProtectedRoute = pathname.startsWith('/dashboard')
+  const isOnboardingRoute = pathname.startsWith('/onboarding')
   
   // Apply rate limiting only on protected routes
   if (isProtectedRoute) {
@@ -71,6 +72,9 @@ export async function middleware(request: NextRequest) {
   // Check for session cookie (optimistic check only - not secure validation)
   const sessionCookie = getSessionCookie(request)
   
+  // Email verification routes - accessible to all authenticated users
+  const isVerificationRoute = pathname.startsWith('/verify-email')
+  
   // Auth routes - redirect if session cookie exists
   const isAuthRoute = ['/sign-in', '/sign-up', '/forgot-password'].some(
     (route) => pathname.startsWith(route)
@@ -83,10 +87,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(signInUrl)
   }
   
-  // Redirect authenticated users from auth pages to dashboard
+  // Allow onboarding route for authenticated users
+  if (isOnboardingRoute && sessionCookie) {
+    return NextResponse.next()
+  }
+  
+  // Allow verification routes for authenticated users (don't redirect to dashboard)
+  if (isVerificationRoute && sessionCookie) {
+    return NextResponse.next()
+  }
+  
+  // Redirect authenticated users from auth pages to onboarding or dashboard
   if (isAuthRoute && sessionCookie) {
     const redirectTo = request.nextUrl.searchParams.get('redirect')
-    const dashboardUrl = new URL(redirectTo || '/dashboard', request.url)
+    const dashboardUrl = new URL(redirectTo || '/onboarding', request.url)
     return NextResponse.redirect(dashboardUrl)
   }
   
