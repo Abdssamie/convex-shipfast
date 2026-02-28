@@ -381,6 +381,7 @@ export function DataTable({
     [focusDocuments]
   )
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const pastPerformanceTable = useReactTable({
     data: pastPerformance,
     columns,

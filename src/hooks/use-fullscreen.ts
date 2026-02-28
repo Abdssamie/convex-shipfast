@@ -12,8 +12,8 @@ export function useFullscreen() {
 
     document.addEventListener("fullscreenchange", handleFullscreenChange)
     
-    // Initial check
-    setIsFullscreen(!!document.fullscreenElement)
+    // Check initial state asynchronously to avoid cascading renders
+    handleFullscreenChange()
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange)
