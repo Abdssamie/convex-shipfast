@@ -93,4 +93,22 @@ export default defineSchema({
     .index("by_date", ["date"])
     .index("by_type", ["type"]),
 
+  notifications: defineTable({
+    userId: v.string(),
+    type: v.union(
+      v.literal("task_completed"),
+      v.literal("task_assigned"),
+      v.literal("welcome"),
+      v.literal("system"),
+      v.literal("info")
+    ),
+    title: v.string(),
+    message: v.string(),
+    read: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_read", ["userId", "read"])
+    .index("by_created_at", ["createdAt"]),
+
 });

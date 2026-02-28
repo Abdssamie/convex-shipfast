@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const list = query({
   args: {
@@ -141,6 +142,9 @@ export const update = mutation({
       throw new Error("Not authorized to update this task");
     }
 
+    const wasCompleted = task.status === "completed";
+    const isNowCompleted = args.status === "completed";
+
     await ctx.db.patch(args.id, {
       ...(args.title !== undefined && { title: args.title }),
       ...(args.description !== undefined && { description: args.description }),
@@ -151,6 +155,16 @@ export const update = mutation({
       ...(args.dueDate !== undefined && { dueDate: args.dueDate }),
       updatedAt: Date.now(),
     });
+
+    // Create notification when task is completed
+    if (!wasCompleted && isNowCompleted) {
+      await ctx.scheduler.runAfter(0, internal.notifications.createNotification, {
+        userId: identity.subject,
+        type: "task_completed",
+        title: "Task Completed",
+        message: `You completed the task: ${args.title ?? task.title}`,
+      });
+    }
 
     return { success: true };
   },

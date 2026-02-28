@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./features/auth/auth";
+import { internal } from "./_generated/api";
 
 export const getCurrentProfile = query({
   args: {},
@@ -145,6 +146,14 @@ export const completeOnboarding = mutation({
         ...(args.preferences !== undefined && { preferences: args.preferences }),
         hasCompletedOnboarding: true,
       },
+    });
+
+    // Create welcome notification
+    await ctx.scheduler.runAfter(0, internal.notifications.createNotification, {
+      userId: identity.subject,
+      type: "welcome",
+      title: "Welcome to ShadcnStore!",
+      message: "Thanks for joining us. Explore the dashboard to get started with your tasks and projects.",
     });
 
     return { success: true };

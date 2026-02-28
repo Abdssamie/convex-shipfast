@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 import { authComponent, createAuth } from "./features/auth/auth";
 import { polar } from "./polar";
-import { checkRateLimit, authLimiter } from "./rate-limit";
+import { checkRateLimit, authLimiter } from "./rateLimit";
 
 const http = httpRouter();
 

@@ -36,6 +36,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                   description?: null | string;
                   email: string;
                   emailVerified: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name: string;
                   preferences?: null | string;
@@ -150,6 +151,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -439,6 +441,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -807,6 +810,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                   description?: null | string;
                   email?: string;
                   emailVerified?: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name?: string;
                   preferences?: null | string;
@@ -826,6 +830,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1167,6 +1172,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                   description?: null | string;
                   email?: string;
                   emailVerified?: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name?: string;
                   preferences?: null | string;
@@ -1186,6 +1192,7 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"

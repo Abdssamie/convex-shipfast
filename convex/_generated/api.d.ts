@@ -18,7 +18,9 @@ import type * as features_email_index from "../features/email/index.js";
 import type * as features_monitoring_sentry from "../features/monitoring/sentry.js";
 import type * as features_organization_organization from "../features/organization/organization.js";
 import type * as http from "../http.js";
+import type * as notifications from "../notifications.js";
 import type * as polar from "../polar.js";
+import type * as rateLimit from "../rateLimit.js";
 import type * as tasks from "../tasks.js";
 import type * as user from "../user.js";
 
@@ -39,7 +41,9 @@ declare const fullApi: ApiFromModules<{
   "features/monitoring/sentry": typeof features_monitoring_sentry;
   "features/organization/organization": typeof features_organization_organization;
   http: typeof http;
+  notifications: typeof notifications;
   polar: typeof polar;
+  rateLimit: typeof rateLimit;
   tasks: typeof tasks;
   user: typeof user;
 }>;
@@ -85,6 +89,7 @@ export declare const components: {
                   description?: null | string;
                   email: string;
                   emailVerified: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name: string;
                   preferences?: null | string;
@@ -198,6 +203,7 @@ export declare const components: {
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -486,6 +492,7 @@ export declare const components: {
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -851,6 +858,7 @@ export declare const components: {
                   description?: null | string;
                   email?: string;
                   emailVerified?: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name?: string;
                   preferences?: null | string;
@@ -870,6 +878,7 @@ export declare const components: {
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1210,6 +1219,7 @@ export declare const components: {
                   description?: null | string;
                   email?: string;
                   emailVerified?: boolean;
+                  hasCompletedOnboarding?: null | boolean;
                   image?: null | string;
                   name?: string;
                   preferences?: null | string;
@@ -1229,6 +1239,7 @@ export declare const components: {
                     | "bio"
                     | "description"
                     | "preferences"
+                    | "hasCompletedOnboarding"
                     | "_id";
                   operator?:
                     | "lt"

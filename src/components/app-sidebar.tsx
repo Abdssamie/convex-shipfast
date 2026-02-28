@@ -19,6 +19,7 @@ import {
 import Link from "next/link"
 import { Logo } from "@/components/logo"
 import { SidebarNotification } from "@/components/sidebar-notification"
+import { NotificationsPopover } from "@/components/notifications-popover"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -226,6 +227,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
               </Link>
             </SidebarMenuButton>
+            <NotificationsPopover />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
