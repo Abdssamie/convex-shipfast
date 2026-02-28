@@ -20,6 +20,7 @@ import Link from "next/link"
 import { Logo } from "@/components/logo"
 import { SidebarNotification } from "@/components/sidebar-notification"
 import { NotificationsPopover } from "@/components/notifications-popover"
+import { OrganizationSwitcher } from "@/components/organization-switcher"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -193,6 +194,10 @@ const data = {
               title: "Connections",
               url: "/settings/connections",
             },
+            {
+              title: "Organization",
+              url: "/settings/organization",
+            },
           ],
         },
         {
@@ -230,6 +235,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <NotificationsPopover />
           </SidebarMenuItem>
         </SidebarMenu>
+        <div className="px-2 py-2">
+          <OrganizationSwitcher />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {data.navGroups.map((group) => (
