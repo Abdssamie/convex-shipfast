@@ -7,18 +7,17 @@ type BetterAuthEmailPayload = {
   tags?: string[];
 };
 
-const sendBetterAuthEmail = (flow: EmailFlow, payload: BetterAuthEmailPayload) => {
-  void sendEmail({
-    flow,
-    to: payload.to,
-    params: payload.params,
-    tags: payload.tags,
-  }).match(
-    () => undefined,
-    (error) => {
-      console.warn("brevo_email_failed", error);
-    },
-  );
+const sendBetterAuthEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayload) => {
+  try {
+    await sendEmail({
+      flow,
+      to: payload.to,
+      params: payload.params,
+      tags: payload.tags,
+    });
+  } catch (error) {
+    console.warn("brevo_email_failed", error);
+  }
 };
 
 export const sendVerificationEmail = (params: {

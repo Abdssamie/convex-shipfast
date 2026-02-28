@@ -1,4 +1,3 @@
-import { errAsync, okAsync, ResultAsync } from "neverthrow";
 import {
   type BrevoConfig,
   type EmailFlow,
@@ -21,6 +20,7 @@ type BrevoEmailPayload = {
 type BrevoResponseSuccess = {
   messageIds: string[];
 };
+
 const createBrevoRequest = async (
   config: BrevoConfig,
   payload: BrevoEmailPayload,
@@ -59,22 +59,18 @@ const createBrevoRequest = async (
   throw lastError;
 };
 
-export const sendBrevoTemplate = (params: {
+export const sendBrevoTemplate = async (params: {
   flow: EmailFlow;
   to: { email: string; name?: string };
   templateId: number;
   params?: Record<string, string>;
   tags?: string[];
-}): ResultAsync<BrevoResponseSuccess, EmailSendError> => {
-  const configResult = getBrevoConfig();
-
-  if (configResult.isErr()) {
-    return errAsync({ ...configResult.error, flow: params.flow });
-  }
+}): Promise<BrevoResponseSuccess> => {
+  const config = getBrevoConfig();
 
   const payload: BrevoEmailPayload = {
-    sender: configResult.value.sender,
-    replyTo: configResult.value.replyTo,
+    sender: config.sender,
+    replyTo: config.replyTo,
     templateId: params.templateId,
     params: params.params,
     tags: params.tags,
@@ -94,33 +90,34 @@ export const sendBrevoTemplate = (params: {
     templateId: params.templateId,
   });
 
-  return ResultAsync.fromPromise(
-    createBrevoRequest(configResult.value, payload),
+  try {
+    const response = await createBrevoRequest(config, payload);
+    
+    let body: any = {};
+    try {
+      body = await response.json();
+    } catch {
+      // Ignore JSON parse errors
+    }
 
-    // Error
-    () => errorBody(undefined, "network_error"),
-  ).andThen((response) =>
-    ResultAsync.fromPromise(
-      response.json().catch(() => ({})),
+    if (response.ok) {
+      const messageIds =
+        body && typeof body === "object" && "messageIds" in body
+          ? ((body as { messageIds?: string[] }).messageIds ?? [])
+          : [];
+      return { messageIds };
+    }
 
-      // Error
-      () => errorBody(response.status, response.statusText),
-    ).andThen((body) => {
-      if (response.ok) {
-        const messageIds =
-          body && typeof body === "object" && "messageIds" in body
-            ? ((body as { messageIds?: string[] }).messageIds ?? [])
-            : [];
-        return okAsync({ messageIds });
-      }
+    const reason =
+      body && typeof body === "object" && "message" in body
+        ? String((body as { message?: string }).message)
+        : response.statusText;
 
-      const reason =
-        body && typeof body === "object" && "message" in body
-          ? String((body as { message?: string }).message)
-          : response.statusText;
-
-      // Error
-      return errAsync(errorBody(response.status, reason));
-    }),
-  );
+    throw errorBody(response.status, reason);
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error) {
+      throw error;
+    }
+    throw errorBody(undefined, "network_error");
+  }
 };

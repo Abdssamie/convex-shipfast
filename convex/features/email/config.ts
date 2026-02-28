@@ -1,5 +1,3 @@
-import { err, ok, type Result } from "neverthrow";
-
 export type EmailFlow =
   | "email_verification"
   | "password_reset"
@@ -27,29 +25,18 @@ export type BrevoConfig = {
   replyTo?: { name?: string; email: string };
 };
 
-const requiredEnv = (field: string): Result<string, EmailConfigError> => {
+const requiredEnv = (field: string): string => {
   const value = process.env[field];
   if (!value) {
-    return err({ code: "missing_env", field, value: '' });
+    throw { code: "missing_env", field, value: '' } as EmailConfigError;
   }
-  return ok(value);
+  return value;
 };
 
-export const getBrevoConfig = (): Result<BrevoConfig, EmailConfigError> => {
-  const apiKeyResult = requiredEnv("BREVO_API_KEY");
-  if (apiKeyResult.isErr()) {
-    return err(apiKeyResult.error);
-  }
-
-  const senderNameResult = requiredEnv("BREVO_SENDER_NAME");
-  if (senderNameResult.isErr()) {
-    return err(senderNameResult.error);
-  }
-
-  const senderEmailResult = requiredEnv("BREVO_SENDER_EMAIL");
-  if (senderEmailResult.isErr()) {
-    return err(senderEmailResult.error);
-  }
+export const getBrevoConfig = (): BrevoConfig => {
+  const apiKey = requiredEnv("BREVO_API_KEY");
+  const senderName = requiredEnv("BREVO_SENDER_NAME");
+  const senderEmail = requiredEnv("BREVO_SENDER_EMAIL");
 
   const replyToEmail = process.env.BREVO_REPLY_TO_EMAIL;
   const replyToName = process.env.BREVO_REPLY_TO_NAME;
@@ -60,14 +47,14 @@ export const getBrevoConfig = (): Result<BrevoConfig, EmailConfigError> => {
     }
     : undefined;
 
-  return ok({
-    apiKey: apiKeyResult.value,
+  return {
+    apiKey,
     sender: {
-      name: senderNameResult.value,
-      email: senderEmailResult.value,
+      name: senderName,
+      email: senderEmail,
     },
     replyTo,
-  });
+  };
 };
 
 const templateEnvByFlow: Record<EmailFlow, string> = {
@@ -78,19 +65,17 @@ const templateEnvByFlow: Record<EmailFlow, string> = {
   welcome: "BREVO_TEMPLATE_WELCOME",
 };
 
-export const getBrevoTemplateId = (
-  flow: EmailFlow,
-): Result<number, EmailConfigError> => {
+export const getBrevoTemplateId = (flow: EmailFlow): number => {
   const field = templateEnvByFlow[flow];
   const value = process.env[field];
   if (!value) {
-    return err({ code: "missing_env", field, value: "" });
+    throw { code: "missing_env", field, value: "" } as EmailConfigError;
   }
 
   const templateId = Number(value);
   if (!Number.isInteger(templateId)) {
-    return err({ code: "invalid_template_id", field, value });
+    throw { code: "invalid_template_id", field, value } as EmailConfigError;
   }
 
-  return ok(templateId);
+  return templateId;
 };

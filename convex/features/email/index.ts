@@ -1,4 +1,3 @@
-import { errAsync, okAsync, type ResultAsync } from "neverthrow";
 import {
   type EmailFlow,
   type EmailSendError,
@@ -13,19 +12,16 @@ export type EmailRequest = {
   tags?: string[];
 };
 
-export const sendEmail = (
+export const sendEmail = async (
   request: EmailRequest,
-) => {
-  const templateResult = getBrevoTemplateId(request.flow);
-  if (templateResult.isErr()) {
-    return errAsync({ ...templateResult.error, flow: request.flow });
-  }
+): Promise<void> => {
+  const templateId = getBrevoTemplateId(request.flow);
 
-  return sendBrevoTemplate({
+  await sendBrevoTemplate({
     flow: request.flow,
     to: request.to,
-    templateId: templateResult.value,
+    templateId,
     params: request.params,
     tags: request.tags,
-  }).andThen(() => okAsync(null));
+  });
 };
