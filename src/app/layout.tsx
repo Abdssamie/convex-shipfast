@@ -6,6 +6,7 @@ import { SidebarConfigProvider } from "@/contexts/sidebar-context";
 import { inter } from "@/lib/fonts";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
 import { getToken } from "@/lib/auth/server";
+import { RootErrorBoundary } from "@/components/root-error-boundary";
 
 export const metadata: Metadata = {
   title: "Shadcn Dashboard",
@@ -30,7 +31,9 @@ export default async function RootLayout({
         <ConvexClientProvider initialToken={token}>
           <ThemeProvider defaultTheme="system" storageKey="nextjs-ui-theme">
             <SidebarConfigProvider>
-              {children}
+              <RootErrorBoundary>
+                {children}
+              </RootErrorBoundary>
             </SidebarConfigProvider>
           </ThemeProvider>
         </ConvexClientProvider>

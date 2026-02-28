@@ -13,6 +13,7 @@ import { authClient } from "@/lib/auth/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useState, FormEvent } from "react"
+import { checkRateLimit, authLimiter } from "@/lib/rate-limit"
 
 export function SignupForm3({
   className,
@@ -46,6 +47,15 @@ export function SignupForm3({
     }
 
     try {
+      // Check rate limit
+      const rateLimitResult = await checkRateLimit(authLimiter, email)
+      if (!rateLimitResult.success) {
+        const resetTime = rateLimitResult.reset ? new Date(rateLimitResult.reset).toLocaleTimeString() : "soon"
+        toast.error(`Too many signup attempts. Please try again at ${resetTime}`)
+        setIsLoading(false)
+        return
+      }
+
       const result = await authClient.signUp.email({
         email,
         password,
