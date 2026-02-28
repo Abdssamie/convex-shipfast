@@ -20,12 +20,10 @@ import type { Task } from "../data/schema"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
-  onAddTask?: (task: Task) => void
 }
 
 export function DataTableToolbar<TData>({
   table,
-  onAddTask,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
 
@@ -166,7 +164,7 @@ export function DataTableToolbar<TData>({
         </div>
         <div className="flex items-center space-x-2">
           <DataTableViewOptions table={table} />
-          <AddTaskModal onAddTask={onAddTask} />
+          <AddTaskModal />
         </div>
       </div>
     </div>

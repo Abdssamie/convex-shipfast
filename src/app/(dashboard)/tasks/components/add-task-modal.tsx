@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { Plus } from "lucide-react"
 import { z } from "zod"
+import { useMutation } from "convex/react"
+import { toast } from "sonner"
+import { api } from "@/convex/_generated/api"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,11 +28,9 @@ import {
 } from "@/components/ui/select"
 
 import { priorities, statuses, categories } from "../data/data"
-import type { Task } from "../data/schema"
 
 // Extended task schema for the form
 const taskFormSchema = z.object({
-  id: z.string(),
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   status: z.string(),
@@ -40,14 +41,24 @@ const taskFormSchema = z.object({
 type TaskFormData = z.infer<typeof taskFormSchema>
 
 interface AddTaskModalProps {
-  onAddTask?: (task: Task) => void
   trigger?: React.ReactNode
 }
 
-export function AddTaskModal({ onAddTask, trigger }: AddTaskModalProps) {
+// Map frontend priority to backend priority
+const mapPriorityToBackend = (frontendPriority: string): "low" | "medium" | "high" => {
+  const priorityMap: Record<string, "low" | "medium" | "high"> = {
+    minor: "low",
+    normal: "medium",
+    important: "high",
+    critical: "high",
+  }
+  return priorityMap[frontendPriority] || "medium"
+}
+
+export function AddTaskModal({ trigger }: AddTaskModalProps) {
   const [open, setOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState<TaskFormData>({
-    id: "",
     title: "",
     description: "",
     status: "todo",
@@ -56,37 +67,43 @@ export function AddTaskModal({ onAddTask, trigger }: AddTaskModalProps) {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // Generate unique task ID
-  const generateTaskId = () => {
-    const prefix = "TASK"
-    const number = Math.floor(Math.random() * 9999) + 1000
-    return `${prefix}-${number}`
-  }
+  const createTask = useMutation(api.tasks.create)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     try {
-      // Validate form data
-      const validatedData = taskFormSchema.parse({
+      setIsSubmitting(true)
+      
+      // Sanitize input data
+      const sanitizedData = {
         ...formData,
-        id: generateTaskId(),
-      })
-
-      // Create the task
-      const newTask: Task = {
-        id: validatedData.id,
-        title: validatedData.title,
-        status: validatedData.status,
-        category: validatedData.category,
-        priority: validatedData.priority,
+        title: formData.title.trim(),
+        description: formData.description?.trim(),
+        status: formData.status.trim(),
+        category: formData.category.trim(),
+        priority: formData.priority.trim(),
       }
 
-      onAddTask?.(newTask)
+      // Validate form data
+      const validatedData = taskFormSchema.parse(sanitizedData)
+
+      // Map status to backend format
+      const backendStatus = validatedData.status === "todo" ? "pending" : validatedData.status as "pending" | "in progress" | "completed" | "cancelled"
+
+      // Create the task via Convex
+      await createTask({
+        title: validatedData.title,
+        description: validatedData.description,
+        status: backendStatus,
+        category: validatedData.category,
+        priority: mapPriorityToBackend(validatedData.priority),
+      })
+
+      toast.success("Task created successfully")
 
       // Reset form and close modal
       setFormData({
-        id: "",
         title: "",
         description: "",
         status: "todo",
@@ -104,13 +121,17 @@ export function AddTaskModal({ onAddTask, trigger }: AddTaskModalProps) {
           }
         })
         setErrors(newErrors)
+      } else {
+        toast.error("Failed to create task")
+        console.error("Failed to create task:", error)
       }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   const handleCancel = () => {
     setFormData({
-      id: "",
       title: "",
       description: "",
       status: "todo",
@@ -244,9 +265,9 @@ export function AddTaskModal({ onAddTask, trigger }: AddTaskModalProps) {
             <Button type="button" variant="outline" onClick={handleCancel} className="cursor-pointer">
               Cancel
             </Button>
-            <Button type="submit" className="cursor-pointer">
+            <Button type="submit" className="cursor-pointer" disabled={isSubmitting}>
               <Plus className="w-4 h-4 mr-2" />
-              Create Task
+              {isSubmitting ? "Creating..." : "Create Task"}
             </Button>
           </div>
         </form>

@@ -4,16 +4,36 @@ import { CalendarSidebar } from "./calendar-sidebar"
 import { CalendarMain } from "./calendar-main"
 import { EventForm } from "./event-form"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { type CalendarEvent } from "../types"
 import { useCalendar } from "../use-calendar"
+import { useMemo } from "react"
 
-interface CalendarProps {
-  events: CalendarEvent[]
-  eventDates: Array<{ date: Date; count: number }>
-}
+export function Calendar() {
+  const calendar = useCalendar()
 
-export function Calendar({ events, eventDates }: CalendarProps) {
-  const calendar = useCalendar(events)
+  // Calculate event dates for the calendar picker
+  const eventDates = useMemo(() => {
+    const dateMap = new Map<string, number>()
+    
+    calendar.events.forEach((event) => {
+      const dateKey = event.date.toDateString()
+      dateMap.set(dateKey, (dateMap.get(dateKey) || 0) + 1)
+    })
+
+    return Array.from(dateMap.entries()).map(([dateStr, count]) => ({
+      date: new Date(dateStr),
+      count,
+    }))
+  }, [calendar.events])
+
+  if (calendar.isLoading) {
+    return (
+      <div className="border rounded-lg bg-background relative">
+        <div className="flex min-h-[800px] items-center justify-center">
+          <div className="text-muted-foreground">Loading calendar...</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

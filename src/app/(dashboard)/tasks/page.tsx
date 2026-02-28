@@ -1,50 +1,38 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { z } from "zod"
 import { ArrowUp, BarChart3, CheckCircle2, Clock, ListTodo } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
-import { taskSchema, type Task } from "./data/schema"
-import tasksData from "./data/tasks.json"
+import type { Task } from "./data/schema"
 
-// Use static import for tasks data (works in both Vite and Next.js)
-async function getTasks() {
-  return z.array(taskSchema).parse(tasksData)
+// Map backend priority to frontend priority
+const mapPriority = (backendPriority: "low" | "medium" | "high"): string => {
+  const priorityMap = {
+    low: "minor",
+    medium: "normal",
+    high: "important",
+  }
+  return priorityMap[backendPriority] || "normal"
 }
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<z.infer<typeof taskSchema>[]>([])
-  const [loading, setLoading] = useState(true)
+  const backendTasks = useQuery(api.tasks.list, {})
+  const stats = useQuery(api.tasks.getStats, {})
 
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const taskList = await getTasks()
-        setTasks(taskList)
-      } catch (error) {
-        console.error("Failed to load tasks:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
+  const loading = backendTasks === undefined || stats === undefined
 
-    loadTasks()
-  }, [])
-
-  const handleAddTask = (newTask: Task) => {
-    setTasks(prev => [newTask, ...prev])
-  }
-
-  // Calculate statistics
-  const stats = {
-    total: tasks.length,
-    completed: tasks.filter(t => t.status === "completed").length,
-    inProgress: tasks.filter(t => t.status === "in progress").length,
-    pending: tasks.filter(t => t.status === "pending").length,
-  }
+  // Map backend tasks to frontend Task type
+  const tasks: Task[] = backendTasks?.map(task => ({
+    id: task._id,
+    title: task.title,
+    status: task.status === "cancelled" ? "pending" : task.status,
+    category: task.category,
+    priority: mapPriority(task.priority),
+  })) ?? []
 
   if (loading) {
     return (
@@ -86,10 +74,10 @@ export default function TaskPage() {
                 <div>
                   <p className="text-muted-foreground text-sm font-medium">Total Tasks</p>
                   <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{stats.total}</span>
+                    <span className="text-2xl font-bold">{stats?.total ?? 0}</span>
                     <span className="flex items-center gap-0.5 text-sm text-green-500">
                       <ArrowUp className="size-3.5" />
-                      {stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
+                      {stats && stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
                     </span>
                   </div>
                 </div>
@@ -106,10 +94,10 @@ export default function TaskPage() {
                 <div>
                   <p className="text-muted-foreground text-sm font-medium">Completed</p>
                   <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{stats.completed}</span>
+                    <span className="text-2xl font-bold">{stats?.completed ?? 0}</span>
                     <span className="flex items-center gap-0.5 text-sm text-green-500">
                       <ArrowUp className="size-3.5" />
-                      {Math.round((stats.completed / stats.total) * 100)}%
+                      {stats && stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}%
                     </span>
                   </div>
                 </div>
@@ -126,10 +114,10 @@ export default function TaskPage() {
                 <div>
                   <p className="text-muted-foreground text-sm font-medium">In Progress</p>
                   <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{stats.inProgress}</span>
+                    <span className="text-2xl font-bold">{stats?.inProgress ?? 0}</span>
                     <span className="flex items-center gap-0.5 text-sm text-green-500">
                       <ArrowUp className="size-3.5" />
-                      {Math.round((stats.inProgress / stats.total) * 100)}%
+                      {stats && stats.total > 0 ? Math.round((stats.inProgress / stats.total) * 100) : 0}%
                     </span>
                   </div>
                 </div>
@@ -146,10 +134,10 @@ export default function TaskPage() {
                 <div>
                   <p className="text-muted-foreground text-sm font-medium">Pending</p>
                   <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{stats.pending}</span>
+                    <span className="text-2xl font-bold">{stats?.pending ?? 0}</span>
                     <span className="flex items-center gap-0.5 text-sm text-orange-500">
                       <ArrowUp className="size-3.5" />
-                      {Math.round((stats.pending / stats.total) * 100)}%
+                      {stats && stats.total > 0 ? Math.round((stats.pending / stats.total) * 100) : 0}%
                     </span>
                   </div>
                 </div>
@@ -170,7 +158,7 @@ export default function TaskPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable data={tasks} columns={columns} onAddTask={handleAddTask} />
+            <DataTable data={tasks} columns={columns} />
           </CardContent>
         </Card>
       </div>

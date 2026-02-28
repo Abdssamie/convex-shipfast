@@ -1,7 +1,11 @@
 import {
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   CheckCircle2,
   Circle,
   Clock,
+  Minus,
   PlayCircle,
 } from "lucide-react"
 
@@ -54,18 +58,22 @@ export const statuses = [
 export const priorities = [
   {
     label: "Minor",
-    value: "minor"
+    value: "minor",
+    icon: ArrowDown,
   },
   {
     label: "Normal",
-    value: "normal"
+    value: "normal",
+    icon: Minus,
   },
   {
     label: "Important",
-    value: "important"
+    value: "important",
+    icon: ArrowUp,
   },
   {
     label: "Critical",
-    value: "critical"
+    value: "critical",
+    icon: AlertTriangle,
   },
 ]

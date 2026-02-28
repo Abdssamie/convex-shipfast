@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { toast } from "sonner"
+import { useEffect } from "react"
+import { useTheme } from "next-themes"
 
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark"]),
@@ -26,6 +31,11 @@ const appearanceFormSchema = z.object({
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>
 
 export default function AppearanceSettings() {
+  const { setTheme } = useTheme()
+  
+  const profile = useQuery(api.user.getCurrentProfile)
+  const updateProfile = useMutation(api.user.updateProfile)
+  
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: {
@@ -37,9 +47,47 @@ export default function AppearanceSettings() {
     },
   })
 
-  function onSubmit(data: AppearanceFormValues) {
-    console.log("Form submitted:", data)
-    // Here you would typically save the data
+  // Load user preferences when profile is available
+  useEffect(() => {
+    const prefs = profile?.preferences
+    if (!prefs || typeof prefs !== 'object') return
+    
+    // Type guard to ensure prefs is not null
+    const safePrefs = prefs as Record<string, unknown>
+    if ('theme' in safePrefs && safePrefs.theme) {
+      const themeValue = safePrefs.theme
+      if (themeValue === "light" || themeValue === "dark") {
+        form.setValue("theme", themeValue)
+      }
+    }
+  }, [profile, form])
+
+  async function onSubmit(data: AppearanceFormValues) {
+    try {
+      // Update theme in both backend and local theme system
+      setTheme(data.theme)
+      
+      await updateProfile({
+        preferences: {
+          theme: data.theme,
+        },
+      })
+      
+      toast.success("Appearance settings updated successfully")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update appearance settings")
+    }
+  }
+
+  const isLoading = profile === undefined
+  const isSaving = form.formState.isSubmitting
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 px-4 lg:px-6 flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Loading appearance settings...</p>
+      </div>
+    )
   }
 
   return (
@@ -217,10 +265,10 @@ export default function AppearanceSettings() {
             />
 
             <div className="flex space-x-2 mt-12">
-              <Button type="submit" className="cursor-pointer">
-                Save Preferences
+              <Button type="submit" disabled={isSaving} className="cursor-pointer">
+                {isSaving ? "Saving..." : "Save Preferences"}
               </Button>
-              <Button variant="outline" type="button" className="cursor-pointer">Cancel</Button>
+              <Button variant="outline" type="button" onClick={() => form.reset()} className="cursor-pointer">Cancel</Button>
             </div>
           </form>
         </Form>

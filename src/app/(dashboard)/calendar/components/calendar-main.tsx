@@ -38,9 +38,6 @@ import {
 import { cn } from "@/lib/utils"
 import { type CalendarEvent } from "../types"
 
-// Import data
-import eventsData from "../data/events.json"
-
 interface CalendarMainProps {
   selectedDate?: Date
   onDateSelect?: (date: Date) => void
@@ -49,14 +46,7 @@ interface CalendarMainProps {
   onEventClick?: (event: CalendarEvent) => void
 }
 
-export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events, onEventClick }: CalendarMainProps) {
-  // Convert JSON events to CalendarEvent objects with proper Date objects, fallback to imported data
-  const sampleEvents: CalendarEvent[] = events || eventsData.map(event => ({
-    ...event,
-    date: new Date(event.date),
-    type: event.type as "meeting" | "event" | "personal" | "task" | "reminder"
-  }))
-
+export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events = [], onEventClick }: CalendarMainProps) {
   const [currentDate, setCurrentDate] = useState(selectedDate || new Date())
   const [viewMode, setViewMode] = useState<"month" | "week" | "day" | "list">("month")
   const [showEventDialog, setShowEventDialog] = useState(false)
@@ -75,7 +65,7 @@ export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events, 
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
 
   const getEventsForDay = (date: Date) => {
-    return sampleEvents.filter(event => isSameDay(event.date, date))
+    return events.filter(event => isSameDay(event.date, date))
   }
 
   const navigateMonth = (direction: "prev" | "next") => {
@@ -145,7 +135,7 @@ export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events, 
                 <div className="space-y-1">
                   {dayEvents.slice(0, 2).map(event => (
                     <div
-                      key={event.id}
+                      key={event._id}
                       className={cn(
                         "text-xs p-1 rounded-sm text-white cursor-pointer truncate",
                         event.color
@@ -171,7 +161,7 @@ export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events, 
   }
 
   const renderListView = () => {
-    const upcomingEvents = sampleEvents
+    const upcomingEvents = events
       .filter(event => event.date >= new Date())
       .sort((a, b) => a.date.getTime() - b.date.getTime())
 
@@ -179,7 +169,7 @@ export function CalendarMain({ selectedDate, onDateSelect, onMenuClick, events, 
       <div className="flex-1 p-6">
         <div className="space-y-4">
           {upcomingEvents.map(event => (
-            <Card key={event.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleEventClick(event)}>
+            <Card key={event._id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleEventClick(event)}>
               <CardContent className="px-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">

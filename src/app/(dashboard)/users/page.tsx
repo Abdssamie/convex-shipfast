@@ -60,9 +60,8 @@ export default function UsersPage() {
   }
 
   const handleEditUser = (user: User) => {
-    // For now, just log the user to edit
+    // For now, just placeholder
     // In a real app, you'd open an edit dialog
-    console.log("Edit user:", user)
   }
 
   return (

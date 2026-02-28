@@ -18,6 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Bell, Mail, MessageSquare } from "lucide-react"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { toast } from "sonner"
+import { useEffect } from "react"
 
 const notificationsFormSchema = z.object({
   emailSecurity: z.boolean(),
@@ -51,6 +55,9 @@ const notificationsFormSchema = z.object({
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
 
 export default function NotificationSettings() {
+  const profile = useQuery(api.user.getCurrentProfile)
+  const updateProfile = useMutation(api.user.updateProfile)
+  
   const form = useForm<NotificationsFormValues>({
     resolver: zodResolver(notificationsFormSchema),
     defaultValues: {
@@ -83,9 +90,38 @@ export default function NotificationSettings() {
     },
   })
 
-  function onSubmit(data: NotificationsFormValues) {
-    console.log("Notifications settings submitted:", data)
-    // Here you would typically save the settings
+  // Load user preferences when profile is available
+  useEffect(() => {
+    if (profile?.preferences) {
+      // Load notification preferences if they exist
+      // For now, we'll use the defaults since the backend doesn't store all these fields yet
+    }
+  }, [profile])
+
+  async function onSubmit(data: NotificationsFormValues) {
+    try {
+      await updateProfile({
+        preferences: {
+          notifications: data.emailUpdates,
+          emailUpdates: data.emailUpdates,
+        },
+      })
+      
+      toast.success("Notification preferences updated successfully")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update notification preferences")
+    }
+  }
+
+  const isLoading = profile === undefined
+  const isSaving = form.formState.isSubmitting
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 px-4 lg:px-6 flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Loading notification settings...</p>
+      </div>
+    )
   }
 
   return (
@@ -659,8 +695,10 @@ export default function NotificationSettings() {
             </Card>
 
             <div className="flex space-x-2">
-              <Button type="submit" className="cursor-pointer">Save Preferences</Button>
-              <Button variant="outline" type="reset" className="cursor-pointer">Cancel</Button>
+              <Button type="submit" disabled={isSaving} className="cursor-pointer">
+                {isSaving ? "Saving..." : "Save Preferences"}
+              </Button>
+              <Button variant="outline" type="reset" onClick={() => form.reset()} className="cursor-pointer">Cancel</Button>
             </div>
           </form>
         </Form>

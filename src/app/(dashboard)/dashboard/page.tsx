@@ -1,13 +1,16 @@
+"use client"
+
 import { ChartAreaInteractive } from "./components/chart-area-interactive"
 import { DataTable } from "./components/data-table"
 import { SectionCards } from "./components/section-cards"
-
-import data from "./data/data.json"
-import pastPerformanceData from "./data/past-performance-data.json"
-import keyPersonnelData from "./data/key-personnel-data.json"
-import focusDocumentsData from "./data/focus-documents-data.json"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 export default function Page() {
+  const stats = useQuery(api.analytics.getDashboardStats)
+
+  const isLoading = stats === undefined
+
   return (
     <>
       {/* Page Title and Description */}
@@ -19,15 +22,15 @@ export default function Page() {
       </div>
 
       <div className="@container/main px-4 lg:px-6 space-y-6">
-        <SectionCards />
+        <SectionCards stats={stats} isLoading={isLoading} />
         <ChartAreaInteractive />
       </div>
       <div className="@container/main">
         <DataTable
-          data={data}
-          pastPerformanceData={pastPerformanceData}
-          keyPersonnelData={keyPersonnelData}
-          focusDocumentsData={focusDocumentsData}
+          data={[]}
+          pastPerformanceData={[]}
+          keyPersonnelData={[]}
+          focusDocumentsData={[]}
         />
       </div>
     </>

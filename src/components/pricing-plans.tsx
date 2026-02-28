@@ -22,6 +22,7 @@ interface PricingPlansProps {
   mode?: 'pricing' | 'billing'
   currentPlanId?: string
   onPlanSelect?: (planId: string) => void
+  loadingPlanId?: string | null
 }
 
 const defaultPlans: PricingPlan[] = [
@@ -70,7 +71,8 @@ export function PricingPlans({
   plans = defaultPlans, 
   mode = 'pricing', 
   currentPlanId,
-  onPlanSelect 
+  onPlanSelect,
+  loadingPlanId = null
 }: PricingPlansProps) {
   const getButtonText = (plan: PricingPlan) => {
     if (mode === 'billing') {
@@ -97,7 +99,11 @@ export function PricingPlans({
   }
 
   const isButtonDisabled = (plan: PricingPlan) => {
-    return mode === 'billing' && currentPlanId === plan.id
+    return (mode === 'billing' && currentPlanId === plan.id) || loadingPlanId !== null
+  }
+  
+  const isButtonLoading = (plan: PricingPlan) => {
+    return loadingPlanId === plan.id
   }
 
   return (
@@ -155,7 +161,7 @@ export function PricingPlans({
               onClick={() => onPlanSelect?.(tier.id)}
               aria-label={`${getButtonText(tier)} - ${tier.name} plan`}
             >
-              {getButtonText(tier)}
+              {isButtonLoading(tier) ? 'Loading...' : getButtonText(tier)}
             </Button>
           </CardFooter>
         </Card>

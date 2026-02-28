@@ -50,7 +50,6 @@ export function ContactSection() {
 
   function onSubmit(values: z.infer<typeof contactFormSchema>) {
     // Here you would typically send the form data to your backend
-    console.log(values)
     // You could also show a success message or redirect
     form.reset()
   }

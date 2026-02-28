@@ -38,10 +38,6 @@ import {
 import { cn } from "@/lib/utils"
 import { type CalendarEvent } from "../types"
 
-// Import data
-import eventsData from "../data/events.json"
-import calendarsData from "../data/calendars.json"
-
 interface CalendarMainProps {
   eventDates?: Array<{ date: Date; count: number }>
 }
@@ -54,12 +50,8 @@ export function CalendarMain({ eventDates = [] }: CalendarMainProps) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [showCalendarSheet, setShowCalendarSheet] = useState(false)
 
-  // Convert JSON events to CalendarEvent objects with proper Date objects
-  const sampleEvents: CalendarEvent[] = eventsData.map(event => ({
-    ...event,
-    date: new Date(event.date),
-    type: event.type as "meeting" | "event" | "personal" | "task" | "reminder"
-  }))
+  // Empty events array - this component is not used in the main calendar
+  const sampleEvents: CalendarEvent[] = []
 
   const monthStart = startOfMonth(currentDate)
   const monthEnd = endOfMonth(currentDate)
@@ -95,12 +87,10 @@ export function CalendarMain({ eventDates = [] }: CalendarMainProps) {
   }
 
   const handleNewCalendar = () => {
-    console.log("Creating new calendar")
     // In a real app, this would open a new calendar form
   }
 
   const handleNewEvent = () => {
-    console.log("Creating new event")
     // In a real app, this would open event form
   }
 
@@ -149,7 +139,7 @@ export function CalendarMain({ eventDates = [] }: CalendarMainProps) {
                 <div className="space-y-1">
                   {dayEvents.slice(0, 3).map((event) => (
                     <div
-                      key={event.id}
+                      key={event._id}
                       className={cn(
                         "text-xs px-2 py-1 rounded text-white cursor-pointer hover:opacity-80 transition-opacity truncate",
                         event.color
@@ -212,12 +202,7 @@ export function CalendarMain({ eventDates = [] }: CalendarMainProps) {
         </div>
         
         <div className="space-y-2">
-          {calendarsData.map((calendar) => (
-            <div key={calendar.id} className="flex items-center space-x-2">
-              <div className={cn("w-3 h-3 rounded-full", calendar.color)} />
-              <span className="text-sm">{calendar.name}</span>
-            </div>
-          ))}
+          {/* Empty calendars list - this component is not actively used */}
         </div>
       </div>
     </div>

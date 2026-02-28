@@ -1,3 +1,5 @@
+"use client"
+
 import { MetricsOverview } from "./components/metrics-overview"
 import { SalesChart } from "./components/sales-chart"
 import { RecentTransactions } from "./components/recent-transactions"
@@ -5,8 +7,14 @@ import { TopProducts } from "./components/top-products"
 import { CustomerInsights } from "./components/customer-insights"
 import { QuickActions } from "./components/quick-actions"
 import { RevenueBreakdown } from "./components/revenue-breakdown"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 
 export default function Dashboard2() {
+  const stats = useQuery(api.analytics.getDashboardStats)
+  const tasksOverTime = useQuery(api.analytics.getTasksOverTime, { days: 90 })
+
+  const isLoading = stats === undefined || tasksOverTime === undefined
   return (
     <div className="flex-1 space-y-6 px-6 pt-0">
         {/* Enhanced Header */}
@@ -25,11 +33,11 @@ export default function Dashboard2() {
         <div className="@container/main space-y-6">
           {/* Top Row - Key Metrics */}
 
-          <MetricsOverview />
+          <MetricsOverview stats={stats} isLoading={isLoading} />
 
           {/* Second Row - Charts in 6-6 columns */}
           <div className="grid gap-6 grid-cols-1 @5xl:grid-cols-2">
-            <SalesChart />
+            <SalesChart tasksOverTime={tasksOverTime} isLoading={isLoading} />
             <RevenueBreakdown />
           </div>
 

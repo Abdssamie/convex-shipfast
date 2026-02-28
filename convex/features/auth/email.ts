@@ -13,12 +13,9 @@ const sendBetterAuthEmail = (flow: EmailFlow, payload: BetterAuthEmailPayload) =
     to: payload.to,
     params: payload.params,
     tags: payload.tags,
-  }).match(
-    () => undefined,
-    (error) => {
-      console.warn("brevo_email_failed", error);
-    },
-  );
+  }).catch((error) => {
+    console.warn("brevo_email_failed", error);
+  });
 };
 
 export const sendVerificationEmail = (params: {

@@ -15,6 +15,11 @@ import {
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { toast } from "sonner"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 const accountFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -29,6 +34,14 @@ const accountFormSchema = z.object({
 type AccountFormValues = z.infer<typeof accountFormSchema>
 
 export default function AccountSettings() {
+  const router = useRouter()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  
+  const profile = useQuery(api.user.getCurrentProfile)
+  const updateProfile = useMutation(api.user.updateProfile)
+  const deleteAccount = useMutation(api.user.deleteAccount)
+  
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
@@ -42,9 +55,85 @@ export default function AccountSettings() {
     },
   })
 
-  function onSubmit(data: AccountFormValues) {
-    console.log("Form submitted:", data)
-    // Here you would typically save the data
+  // Load user data when profile is available
+  useEffect(() => {
+    if (profile) {
+      const nameParts = profile.name?.split(" ") || ["", ""]
+      form.reset({
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        email: profile.email || "",
+        username: profile.email?.split("@")[0] || "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      })
+    }
+  }, [profile, form])
+
+  async function onSubmit(data: AccountFormValues) {
+    try {
+      // Sanitize input data
+      const sanitizedData = {
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.trim(),
+        username: data.username.trim(),
+        currentPassword: data.currentPassword?.trim(),
+        newPassword: data.newPassword?.trim(),
+        confirmPassword: data.confirmPassword?.trim(),
+      }
+
+      // Validate password fields if any are filled
+      if (sanitizedData.newPassword || sanitizedData.confirmPassword) {
+        if (sanitizedData.newPassword !== sanitizedData.confirmPassword) {
+          toast.error("New passwords do not match")
+          return
+        }
+        if (!sanitizedData.currentPassword) {
+          toast.error("Current password is required to change password")
+          return
+        }
+        // Note: Password change would need a separate backend endpoint
+        toast.error("Password change not yet implemented")
+        return
+      }
+
+      const fullName = `${sanitizedData.firstName} ${sanitizedData.lastName}`.trim()
+      
+      await updateProfile({
+        name: fullName,
+      })
+      
+      toast.success("Account settings updated successfully")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update account settings")
+    }
+  }
+
+  async function handleDeleteAccount() {
+    setIsDeleting(true)
+    try {
+      await deleteAccount()
+      toast.success("Account deleted successfully")
+      router.push("/")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to delete account")
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
+  const isLoading = profile === undefined
+  const isSaving = form.formState.isSubmitting
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 px-4 lg:px-6 flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Loading account settings...</p>
+      </div>
+    )
   }
 
   return (
@@ -189,7 +278,12 @@ export default function AccountSettings() {
                       Permanently delete your account and all associated data.
                     </p>
                   </div>
-                  <Button variant="destructive" type="button" className="cursor-pointer">
+                  <Button 
+                    variant="destructive" 
+                    type="button" 
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="cursor-pointer"
+                  >
                     Delete Account
                   </Button>
                 </div>
@@ -197,11 +291,43 @@ export default function AccountSettings() {
             </Card>
 
             <div className="flex space-x-2">
-              <Button type="submit" className="cursor-pointer">Save Changes</Button>
-              <Button variant="outline" type="reset" className="cursor-pointer">Cancel</Button>
+              <Button type="submit" disabled={isSaving} className="cursor-pointer">
+                {isSaving ? "Saving..." : "Save Changes"}
+              </Button>
+              <Button variant="outline" type="reset" onClick={() => form.reset()} className="cursor-pointer">
+                Cancel
+              </Button>
             </div>
           </form>
         </Form>
+
+        {/* Delete Confirmation Dialog */}
+        {showDeleteDialog && (
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+            <div className="bg-background p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+              <h2 className="text-xl font-bold mb-2">Delete Account</h2>
+              <p className="text-muted-foreground mb-6">
+                Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.
+              </p>
+              <div className="flex justify-end gap-3">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowDeleteDialog(false)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete Account"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   )
 }

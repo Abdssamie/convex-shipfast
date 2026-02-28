@@ -1,4 +1,4 @@
- 
+/* eslint-disable */
 /**
  * Generated `api` utility.
  *
@@ -8,7 +8,9 @@
  * @module
  */
 
+import type * as analytics from "../analytics.js";
 import type * as auth from "../auth.js";
+import type * as events from "../events.js";
 import type * as features_email_betterAuth from "../features/email/betterAuth.js";
 import type * as features_email_brevo from "../features/email/brevo.js";
 import type * as features_email_config from "../features/email/config.js";
@@ -17,6 +19,7 @@ import type * as features_monitoring_sentry from "../features/monitoring/sentry.
 import type * as features_organization_organization from "../features/organization/organization.js";
 import type * as http from "../http.js";
 import type * as polar from "../polar.js";
+import type * as tasks from "../tasks.js";
 import type * as user from "../user.js";
 
 import type {
@@ -26,7 +29,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  analytics: typeof analytics;
   auth: typeof auth;
+  events: typeof events;
   "features/email/betterAuth": typeof features_email_betterAuth;
   "features/email/brevo": typeof features_email_brevo;
   "features/email/config": typeof features_email_config;
@@ -35,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   "features/organization/organization": typeof features_organization_organization;
   http: typeof http;
   polar: typeof polar;
+  tasks: typeof tasks;
   user: typeof user;
 }>;
 

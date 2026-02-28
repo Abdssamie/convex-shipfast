@@ -33,13 +33,14 @@ import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { type CalendarEvent } from "../types"
+import { Id } from "@/convex/_generated/dataModel"
 
 interface EventFormProps {
   event?: CalendarEvent | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (event: Partial<CalendarEvent>) => void
-  onDelete?: (eventId: number) => void
+  onSave: (event: Partial<CalendarEvent>) => Promise<void>
+  onDelete?: (eventId: Id<"events">) => Promise<void>
 }
 
 const eventTypes = [
@@ -48,7 +49,12 @@ const eventTypes = [
   { value: "personal", label: "Personal", color: "bg-pink-500" },
   { value: "task", label: "Task", color: "bg-orange-500" },
   { value: "reminder", label: "Reminder", color: "bg-purple-500" }
-]
+] as const
+
+// Type guard to validate event type
+function isValidEventType(value: string): value is CalendarEvent["type"] {
+  return ["meeting", "event", "personal", "task", "reminder"].includes(value)
+}
 
 const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
@@ -77,21 +83,44 @@ export function EventForm({ event, open, onOpenChange, onSave, onDelete }: Event
 
   const [showCalendar, setShowCalendar] = useState(false)
   const [newAttendee, setNewAttendee] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleSave = () => {
-    const eventData: Partial<CalendarEvent> = {
-      ...formData,
-      id: event?.id,
-      color: eventTypes.find(t => t.value === formData.type)?.color || "bg-blue-500"
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      // Sanitize and validate input
+      const sanitizedTitle = formData.title.trim()
+      const sanitizedLocation = formData.location.trim()
+      const sanitizedDescription = formData.description?.trim()
+      const sanitizedAttendees = formData.attendees.map(a => a.trim()).filter(a => a.length > 0)
+
+      if (!sanitizedTitle) {
+        setIsSaving(false)
+        return
+      }
+
+      const eventData: Partial<CalendarEvent> = {
+        ...formData,
+        title: sanitizedTitle,
+        location: sanitizedLocation,
+        description: sanitizedDescription,
+        attendees: sanitizedAttendees,
+        color: eventTypes.find(t => t.value === formData.type)?.color || "bg-blue-500"
+      }
+      await onSave(eventData)
+    } finally {
+      setIsSaving(false)
     }
-    onSave(eventData)
-    onOpenChange(false)
   }
 
-  const handleDelete = () => {
-    if (event?.id && onDelete) {
-      onDelete(event.id)
-      onOpenChange(false)
+  const handleDelete = async () => {
+    if (event?._id && onDelete) {
+      setIsSaving(true)
+      try {
+        await onDelete(event._id)
+      } finally {
+        setIsSaving(false)
+      }
     }
   }
 
@@ -150,7 +179,11 @@ export function EventForm({ event, open, onOpenChange, onSave, onDelete }: Event
                 <Tag className="w-4 h-4" />
                 Event Type
               </Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as CalendarEvent["type"] }))}>
+              <Select value={formData.type} onValueChange={(value) => {
+                if (isValidEventType(value)) {
+                  setFormData(prev => ({ ...prev, type: value }))
+                }
+              }}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -320,15 +353,15 @@ export function EventForm({ event, open, onOpenChange, onSave, onDelete }: Event
 
           {/* Actions */}
           <div className="flex gap-3 pt-6">
-            <Button onClick={handleSave} className="flex-1 cursor-pointer">
-              {event ? "Update Event" : "Create Event"}
+            <Button onClick={handleSave} className="flex-1 cursor-pointer" disabled={isSaving}>
+              {isSaving ? "Saving..." : event ? "Update Event" : "Create Event"}
             </Button>
             {event && onDelete && (
-              <Button onClick={handleDelete} variant="destructive" className="cursor-pointer">
-                Delete
+              <Button onClick={handleDelete} variant="destructive" className="cursor-pointer" disabled={isSaving}>
+                {isSaving ? "Deleting..." : "Delete"}
               </Button>
             )}
-            <Button onClick={() => onOpenChange(false)} variant="outline" className="cursor-pointer">
+            <Button onClick={() => onOpenChange(false)} variant="outline" className="cursor-pointer" disabled={isSaving}>
               Cancel
             </Button>
           </div>

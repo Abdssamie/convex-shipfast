@@ -18,9 +18,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Upload } from "lucide-react"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Logo } from "@/components/logo"
+import { useQuery, useMutation } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { toast } from "sonner"
+import { Id } from "@/convex/_generated/dataModel"
 
 const userFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -42,6 +46,12 @@ export default function UserSettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [useDefaultIcon, setUseDefaultIcon] = useState(true)
+  const [isUploading, setIsUploading] = useState(false)
+  
+  const profile = useQuery(api.user.getCurrentProfile)
+  const updateProfile = useMutation(api.user.updateProfile)
+  const generateUploadUrl = useMutation(api.user.generateUploadUrl)
+  const updateAvatar = useMutation(api.user.updateAvatar)
   
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
@@ -60,24 +70,122 @@ export default function UserSettingsPage() {
     },
   })
 
-  function onSubmit(data: UserFormValues) {
-    console.log("Form submitted:", data)
-    // Here you would typically save the data
+  // Load user data when profile is available
+  useEffect(() => {
+    if (profile) {
+      const nameParts = profile.name?.split(" ") || ["", ""]
+      form.reset({
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+        email: profile.email || "",
+        phone: "",
+        website: "",
+        location: "",
+        role: "",
+        bio: profile.bio || "",
+        company: "",
+        timezone: "",
+        language: "",
+      })
+      
+      if (profile.image) {
+        setProfileImage(profile.image)
+        setUseDefaultIcon(false)
+      }
+    }
+  }, [profile, form])
+
+  async function onSubmit(data: UserFormValues) {
+    try {
+      // Sanitize all input fields
+      const sanitizedData = {
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.trim().toLowerCase(),
+        phone: data.phone?.trim(),
+        website: data.website?.trim(),
+        location: data.location?.trim(),
+        role: data.role?.trim(),
+        bio: data.bio?.trim(),
+        company: data.company?.trim(),
+        timezone: data.timezone?.trim(),
+        language: data.language?.trim(),
+      }
+
+      const fullName = `${sanitizedData.firstName} ${sanitizedData.lastName}`.trim()
+      
+      await updateProfile({
+        name: fullName,
+        bio: sanitizedData.bio,
+      })
+      
+      toast.success("Profile updated successfully")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update profile")
+    }
   }
 
   const handleFileUpload = () => {
     fileInputRef.current?.click()
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (file) {
+    if (!file) return
+
+    // Validate file size (800KB)
+    if (file.size > 800 * 1024) {
+      toast.error("File size must be less than 800KB")
+      return
+    }
+
+    // Validate file type
+    if (!["image/jpeg", "image/gif", "image/png"].includes(file.type)) {
+      toast.error("Only JPG, GIF, and PNG files are allowed")
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      // Preview the image locally
       const reader = new FileReader()
       reader.onload = (e) => {
-        setProfileImage(e.target?.result as string)
-        setUseDefaultIcon(false)
+        const result = e.target?.result
+        if (typeof result === 'string') {
+          setProfileImage(result)
+          setUseDefaultIcon(false)
+        }
       }
       reader.readAsDataURL(file)
+
+      // Upload to Convex
+      const uploadUrl = await generateUploadUrl()
+      const result = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      })
+
+      if (!result.ok) {
+        throw new Error("Upload failed")
+      }
+
+      const { storageId } = await result.json()
+      
+      // Validate storageId before casting
+      if (!storageId || typeof storageId !== 'string') {
+        throw new Error("Invalid storage ID received")
+      }
+      
+      await updateAvatar({ storageId: storageId as Id<"_storage"> })
+      
+      toast.success("Avatar updated successfully")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to upload avatar")
+      setProfileImage(null)
+      setUseDefaultIcon(true)
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -87,6 +195,17 @@ export default function UserSettingsPage() {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
+  }
+
+  const isLoading = profile === undefined
+  const isSaving = form.formState.isSubmitting
+
+  if (isLoading) {
+    return (
+      <div className="px-4 lg:px-6 flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Loading profile...</p>
+      </div>
+    )
   }
 
   return (
@@ -114,18 +233,22 @@ export default function UserSettingsPage() {
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2">
                   <Button 
+                    type="button"
                     variant="default" 
                     size="sm"
                     onClick={handleFileUpload}
+                    disabled={isUploading}
                     className="cursor-pointer"
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload new photo
+                    {isUploading ? "Uploading..." : "Upload new photo"}
                   </Button>
                   <Button 
+                    type="button"
                     variant="outline" 
                     size="sm"
                     onClick={handleReset}
+                    disabled={isUploading}
                     className="cursor-pointer"
                   >
                     Reset
@@ -141,6 +264,7 @@ export default function UserSettingsPage() {
                 accept="image/jpeg,image/gif,image/png"
                 onChange={handleFileChange}
                 className="hidden"
+                disabled={isUploading}
               />
             </div>
 
@@ -345,10 +469,10 @@ export default function UserSettingsPage() {
 
             {/* Action Buttons */}
             <div className="flex justify-start gap-3">
-              <Button type="submit" className="cursor-pointer">
-                Save Changes
+              <Button type="submit" disabled={isSaving} className="cursor-pointer">
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
-              <Button variant="outline" type="button" className="cursor-pointer">
+              <Button variant="outline" type="button" onClick={() => form.reset()} className="cursor-pointer">
                 Cancel
               </Button>
             </div>

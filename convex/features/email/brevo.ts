@@ -96,8 +96,9 @@ export const sendBrevoTemplate = async (params: {
     let body: any = {};
     try {
       body = await response.json();
-    } catch {
-      // Ignore JSON parse errors
+    } catch (jsonError) {
+      // Log JSON parse errors for debugging
+      console.error("Failed to parse Brevo response:", jsonError);
     }
 
     if (response.ok) {
@@ -115,9 +116,12 @@ export const sendBrevoTemplate = async (params: {
 
     throw errorBody(response.status, reason);
   } catch (error) {
+    // Re-throw structured errors
     if (error && typeof error === "object" && "code" in error) {
       throw error;
     }
+    // Log unexpected errors before throwing
+    console.error("Brevo email send error:", error);
     throw errorBody(undefined, "network_error");
   }
 };

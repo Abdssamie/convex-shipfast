@@ -51,13 +51,13 @@ export function CalendarSidebar({
         <Calendars 
           onNewCalendar={onNewCalendar}
           onCalendarToggle={(calendarId, visible) => {
-            console.log(`Calendar ${calendarId} visibility: ${visible}`)
+            // Handle calendar visibility toggle
           }}
           onCalendarEdit={(calendarId) => {
-            console.log(`Edit calendar: ${calendarId}`)
+            // Handle calendar edit
           }}
           onCalendarDelete={(calendarId) => {
-            console.log(`Delete calendar: ${calendarId}`)
+            // Handle calendar delete
           }}
         />
       </div>
