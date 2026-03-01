@@ -7,23 +7,27 @@ type BetterAuthEmailPayload = {
   tags?: string[];
 };
 
-const sendBetterAuthEmail = (flow: EmailFlow, payload: BetterAuthEmailPayload) => {
-  void sendEmail({
+const internalSendEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayload) => {
+  const result = await sendEmail({
     flow,
     to: payload.to,
     params: payload.params,
     tags: payload.tags,
-  }).catch((error) => {
-    console.warn("brevo_email_failed", error);
   });
+
+  if (!result.ok) {
+    console.warn("brevo_email_failed", result.error);
+  }
 };
 
-export const sendVerificationEmail = (params: {
+
+
+export const sendVerificationEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
 }) => {
-  sendBetterAuthEmail("email_verification", {
+  await internalSendEmail("email_verification", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       url: params.url,
@@ -34,12 +38,12 @@ export const sendVerificationEmail = (params: {
   });
 };
 
-export const sendPasswordResetEmail = (params: {
+export const sendPasswordResetEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
 }) => {
-  sendBetterAuthEmail("password_reset", {
+  await internalSendEmail("password_reset", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       url: params.url,
@@ -50,11 +54,11 @@ export const sendPasswordResetEmail = (params: {
   });
 };
 
-export const sendMagicLinkEmail = (params: {
+export const sendMagicLinkEmail = async (params: {
   email: string;
   url: string;
 }) => {
-  sendBetterAuthEmail("magic_link", {
+  await internalSendEmail("magic_link", {
     to: { email: params.email },
     params: {
       url: params.url,
@@ -64,14 +68,14 @@ export const sendMagicLinkEmail = (params: {
   });
 };
 
-export const sendInvitationEmail = (params: {
+export const sendInvitationEmail = async (params: {
   email: string;
   invitedByEmail?: string | null;
   invitedByName?: string | null;
   organizationName?: string | null;
   inviteLink: string;
 }) => {
-  sendBetterAuthEmail("invitation", {
+  await internalSendEmail("invitation", {
     to: { email: params.email },
     params: {
       inviteLink: params.inviteLink,
@@ -84,11 +88,11 @@ export const sendInvitationEmail = (params: {
   });
 };
 
-export const sendWelcomeEmail = (params: {
+export const sendWelcomeEmail = async (params: {
   email: string;
   name?: string | null;
 }) => {
-  sendBetterAuthEmail("welcome", {
+  await internalSendEmail("welcome", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       appName: "FastShip",

@@ -49,7 +49,7 @@ export default function OnboardingPage() {
 
       const { storageId } = await result.json();
       await updateAvatar({ storageId });
-      
+
       // Get the URL for preview
       const response = await fetch(`/api/storage/${storageId}`);
       if (response.ok) {
@@ -117,7 +117,7 @@ export default function OnboardingPage() {
               <div>
                 <CardTitle>Welcome to ShadcnStore</CardTitle>
                 <CardDescription>
-                  Let's get you set up in just a few steps
+                  Let&apos;s get you set up in just a few steps
                 </CardDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={handleSkip}>
@@ -234,9 +234,9 @@ export default function OnboardingPage() {
                   <div className="mx-auto bg-primary/10 text-primary flex size-16 items-center justify-center rounded-full">
                     <Check className="size-8" />
                   </div>
-                  <h3 className="text-lg font-semibold">You're all set!</h3>
+                  <h3 className="text-lg font-semibold">You&apos;re all set!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Here's a quick overview of what you can do
+                    Here&apos;s a quick overview of what you can do
                   </p>
                 </div>
 
