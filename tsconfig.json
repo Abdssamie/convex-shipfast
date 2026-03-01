@@ -26,11 +26,8 @@
       "@/*": [
         "./src/*"
       ],
-      "@/convex/_generated/api": [
-        "./convex/_generated/api.d.ts"
-      ],
-      "@/convex/_generated/dataModel": [
-        "./convex/_generated/dataModel.d.ts"
+      "@/convex/*": [
+        "./convex/*"
       ]
     },
     "target": "ES2020"

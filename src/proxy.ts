@@ -31,13 +31,13 @@ function getRateLimiter() {
 }
 
 /**
- * Middleware for handling authentication redirects and rate limiting.
+ * Proxy for handling authentication redirects and rate limiting.
  * 
- * SECURITY NOTE: This middleware uses cookie-based checks for optimistic redirects only.
+ * SECURITY NOTE: This proxy uses cookie-based checks for optimistic redirects only.
  * It does NOT validate sessions - that must be done in each protected page/route.
  * See: https://www.better-auth.com/docs/integrations/next#auth-protection
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   
   // Legacy redirects - maintain backward compatibility
@@ -109,11 +109,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all request paths except for the ones starting with:
-    // - api (API routes)
-    // - _next/static (static files)
-    // - _next/image (image optimization files)
-    // - favicon.ico, sitemap.xml, robots.txt (static files)
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)).*)',
   ],
 }

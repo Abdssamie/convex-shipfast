@@ -2,7 +2,7 @@ import { createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import type { GenericCtx } from "@convex-dev/better-auth/utils";
 import type { BetterAuthOptions } from "better-auth";
-import { betterAuth } from "better-auth";
+import { betterAuth, type User, type Session } from "better-auth";
 import { magicLink, organization } from "better-auth/plugins";
 import { authEmailHandlers } from "./email";
 import { components } from "../../_generated/api";
@@ -29,7 +29,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
-      sendResetPassword: async ({ user, url }) => {
+      sendResetPassword: async ({ user, url }: { user: User; url: string }) => {
         authEmailHandlers.sendPasswordResetEmail({
           email: user.email,
           name: user.name,
@@ -44,16 +44,16 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         // sendDeleteAccountVerification: () => {},
       },
       additionalFields: {
-        bio: { type: "string", required: false },
-        description: { type: "string", required: false },
-        preferences: { type: "json", required: false },
-        hasCompletedOnboarding: { type: "boolean", required: false },
+        bio: { type: "string" as const, required: false },
+        description: { type: "string" as const, required: false },
+        preferences: { type: "json" as const, required: false },
+        hasCompletedOnboarding: { type: "boolean" as const, required: false },
       },
     },
     emailVerification: {
       expiresIn: 7200, // 2 hours
       sendOnSignUp: true,
-      sendVerificationEmail: async ({ user, url }) => {
+      sendVerificationEmail: async ({ user, url }: { user: User; url: string }) => {
         authEmailHandlers.sendVerificationEmail({
           email: user.email,
           name: user.name,
@@ -64,7 +64,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     databaseHooks: {
       user: {
         create: {
-          after: async (user) => {
+          after: async (user: User) => {
             authEmailHandlers.sendWelcomeEmail({
               email: user.email,
               name: user.name,
@@ -80,7 +80,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
            * workspace immediately without a manual "set active org" step.
            * Uses ctx.runQuery with the betterAuth component adapter directly.
            */
-          before: async (session) => {
+          before: async (session: Session) => {
             const result = await ctx.runQuery(
               components.betterAuth.adapter.findMany,
               {
@@ -99,6 +99,12 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             };
           },
         },
+      },
+    },
+    socialProviders: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       },
     },
     plugins: [
@@ -125,7 +131,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         },
       }),
     ],
-  } satisfies BetterAuthOptions;
+  };
 };
 
 
