@@ -1,7 +1,6 @@
 import { createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import type { GenericCtx } from "@convex-dev/better-auth/utils";
-import type { BetterAuthOptions } from "better-auth";
 import { betterAuth, type User, type Session } from "better-auth";
 import { magicLink, organization } from "better-auth/plugins";
 import { authEmailHandlers } from "./email";

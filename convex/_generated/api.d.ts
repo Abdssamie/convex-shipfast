@@ -18,6 +18,7 @@ import type * as features_email_index from "../features/email/index.js";
 import type * as features_monitoring_sentry from "../features/monitoring/sentry.js";
 import type * as features_organization_mutations from "../features/organization/mutations.js";
 import type * as features_organization_organization from "../features/organization/organization.js";
+import type * as features_shared_result from "../features/shared/result.js";
 import type * as http from "../http.js";
 import type * as notifications from "../notifications.js";
 import type * as polar from "../polar.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   "features/monitoring/sentry": typeof features_monitoring_sentry;
   "features/organization/mutations": typeof features_organization_mutations;
   "features/organization/organization": typeof features_organization_organization;
+  "features/shared/result": typeof features_shared_result;
   http: typeof http;
   notifications: typeof notifications;
   polar: typeof polar;

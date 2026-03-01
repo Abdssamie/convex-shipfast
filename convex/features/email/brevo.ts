@@ -4,6 +4,7 @@ import {
   type EmailSendError,
   getBrevoConfig,
 } from "./config";
+import { type Result, ok, err } from "../shared/result";
 
 type BrevoEmailPayload = {
   sender: { name: string; email: string };
@@ -24,19 +25,26 @@ type BrevoResponseSuccess = {
 const createBrevoRequest = async (
   config: BrevoConfig,
   payload: BrevoEmailPayload,
+  sandbox?: boolean,
   maxRetries = 3
 ): Promise<Response> => {
   let lastError: any;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
+      const headers: Record<string, string> = {
+        "api-key": config.apiKey,
+        "content-type": "application/json",
+        accept: "application/json",
+      };
+
+      if (sandbox) {
+        headers["X-Sib-Sandbox"] = "drop";
+      }
+
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
-        headers: {
-          "api-key": config.apiKey,
-          "content-type": "application/json",
-          accept: "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       });
 
@@ -65,7 +73,8 @@ export const sendBrevoTemplate = async (params: {
   templateId: number;
   params?: Record<string, string>;
   tags?: string[];
-}): Promise<BrevoResponseSuccess> => {
+  sandbox?: boolean;
+}): Promise<Result<BrevoResponseSuccess, EmailSendError>> => {
   const config = getBrevoConfig();
 
   const payload: BrevoEmailPayload = {
@@ -91,8 +100,8 @@ export const sendBrevoTemplate = async (params: {
   });
 
   try {
-    const response = await createBrevoRequest(config, payload);
-    
+    const response = await createBrevoRequest(config, payload, params.sandbox);
+
     let body: any = {};
     try {
       body = await response.json();
@@ -106,7 +115,7 @@ export const sendBrevoTemplate = async (params: {
         body && typeof body === "object" && "messageIds" in body
           ? ((body as { messageIds?: string[] }).messageIds ?? [])
           : [];
-      return { messageIds };
+      return ok({ messageIds });
     }
 
     const reason =
@@ -114,14 +123,14 @@ export const sendBrevoTemplate = async (params: {
         ? String((body as { message?: string }).message)
         : response.statusText;
 
-    throw errorBody(response.status, reason);
+    return err(errorBody(response.status, reason));
   } catch (error) {
     // Re-throw structured errors
     if (error && typeof error === "object" && "code" in error) {
-      throw error;
+      return err(error as EmailSendError);
     }
     // Log unexpected errors before throwing
     console.error("Brevo email send error:", error);
-    throw errorBody(undefined, "network_error");
+    return err(errorBody(undefined, "network_error"));
   }
 };
