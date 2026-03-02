@@ -20,12 +20,12 @@ const sendBetterAuthEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayl
   }
 };
 
-export const sendVerificationEmail = (params: {
+export const sendVerificationEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
 }) => {
-  sendBetterAuthEmail("email_verification", {
+  await sendBetterAuthEmail("email_verification", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       url: params.url,
@@ -36,12 +36,12 @@ export const sendVerificationEmail = (params: {
   });
 };
 
-export const sendPasswordResetEmail = (params: {
+export const sendPasswordResetEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
 }) => {
-  sendBetterAuthEmail("password_reset", {
+  await sendBetterAuthEmail("password_reset", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       url: params.url,
@@ -52,11 +52,11 @@ export const sendPasswordResetEmail = (params: {
   });
 };
 
-export const sendMagicLinkEmail = (params: {
+export const sendMagicLinkEmail = async (params: {
   email: string;
   url: string;
 }) => {
-  sendBetterAuthEmail("magic_link", {
+  await sendBetterAuthEmail("magic_link", {
     to: { email: params.email },
     params: {
       url: params.url,
@@ -66,14 +66,14 @@ export const sendMagicLinkEmail = (params: {
   });
 };
 
-export const sendInvitationEmail = (params: {
+export const sendInvitationEmail = async (params: {
   email: string;
   invitedByEmail?: string | null;
   invitedByName?: string | null;
   organizationName?: string | null;
   inviteLink: string;
 }) => {
-  sendBetterAuthEmail("invitation", {
+  await sendBetterAuthEmail("invitation", {
     to: { email: params.email },
     params: {
       inviteLink: params.inviteLink,
@@ -86,11 +86,11 @@ export const sendInvitationEmail = (params: {
   });
 };
 
-export const sendWelcomeEmail = (params: {
+export const sendWelcomeEmail = async (params: {
   email: string;
   name?: string | null;
 }) => {
-  sendBetterAuthEmail("welcome", {
+  await sendBetterAuthEmail("welcome", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       appName: "FastShip",

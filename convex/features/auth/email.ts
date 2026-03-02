@@ -30,7 +30,7 @@ export const sendVerificationEmail = async (params: {
   await internalSendEmail("email_verification", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
-      url: params.url,
+      verificationUrl: params.url,
       email: params.email,
       name: params.name ?? "",
     },
@@ -46,7 +46,7 @@ export const sendPasswordResetEmail = async (params: {
   await internalSendEmail("password_reset", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
-      url: params.url,
+      resetUrl: params.url,
       email: params.email,
       name: params.name ?? "",
     },
@@ -61,7 +61,7 @@ export const sendMagicLinkEmail = async (params: {
   await internalSendEmail("magic_link", {
     to: { email: params.email },
     params: {
-      url: params.url,
+      magicLink: params.url,
       email: params.email,
     },
     tags: ["better-auth", "magic-link"],
@@ -78,11 +78,9 @@ export const sendInvitationEmail = async (params: {
   await internalSendEmail("invitation", {
     to: { email: params.email },
     params: {
-      inviteLink: params.inviteLink,
-      email: params.email,
-      invitedByEmail: params.invitedByEmail ?? "",
-      invitedByName: params.invitedByName ?? "",
-      organizationName: params.organizationName ?? "",
+      inviteUrl: params.inviteLink,
+      inviterName: params.invitedByName ?? "",
+      appName: "FastShip",
     },
     tags: ["better-auth", "invitation"],
   });

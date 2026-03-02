@@ -29,7 +29,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       enabled: true,
       requireEmailVerification: true,
       sendResetPassword: async ({ user, url }: { user: User; url: string }) => {
-        authEmailHandlers.sendPasswordResetEmail({
+        await authEmailHandlers.sendPasswordResetEmail({
           email: user.email,
           name: user.name,
           url,
@@ -53,7 +53,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       expiresIn: 7200, // 2 hours
       sendOnSignUp: true,
       sendVerificationEmail: async ({ user, url }: { user: User; url: string }) => {
-        authEmailHandlers.sendVerificationEmail({
+        await authEmailHandlers.sendVerificationEmail({
           email: user.email,
           name: user.name,
           url,
@@ -64,7 +64,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       user: {
         create: {
           after: async (user: User) => {
-            authEmailHandlers.sendWelcomeEmail({
+            await authEmailHandlers.sendWelcomeEmail({
               email: user.email,
               name: user.name,
             });
@@ -110,7 +110,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       convex({ authConfig }),
       magicLink({
         sendMagicLink: async ({ email, url }) => {
-          authEmailHandlers.sendMagicLinkEmail({ email, url });
+          await authEmailHandlers.sendMagicLinkEmail({ email, url });
         },
       }),
       organization({
@@ -120,7 +120,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             process.env.NEXT_PUBLIC_SITE_URL ??
             "http://localhost:3000";
           const inviteLink = `${siteUrl}/invite/${data.id}`;
-          authEmailHandlers.sendInvitationEmail({
+          await authEmailHandlers.sendInvitationEmail({
             email: data.email,
             invitedByEmail: data.inviter?.user?.email ?? null,
             invitedByName: data.inviter?.user?.name ?? null,
