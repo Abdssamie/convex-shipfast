@@ -39,20 +39,19 @@ function getRateLimiter() {
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   // Legacy redirects - maintain backward compatibility
   if (pathname === '/login') {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
-  
+
   if (pathname === '/register') {
     return NextResponse.redirect(new URL('/sign-up', request.url))
   }
-  
+
   // Protected routes - require session cookie
   const isProtectedRoute = pathname.startsWith('/dashboard')
-  const isOnboardingRoute = pathname.startsWith('/onboarding')
-  
+
   // Apply rate limiting only on protected routes
   if (isProtectedRoute) {
     const limiter = getRateLimiter()
@@ -68,42 +67,39 @@ export async function proxy(request: NextRequest) {
       }
     }
   }
-  
+
   // Check for session cookie (optimistic check only - not secure validation)
   const sessionCookie = getSessionCookie(request)
-  
+
   // Email verification routes - accessible to all authenticated users
   const isVerificationRoute = pathname.startsWith('/verify-email')
-  
+
   // Auth routes - redirect if session cookie exists
   const isAuthRoute = ['/sign-in', '/sign-up', '/forgot-password'].some(
     (route) => pathname.startsWith(route)
   )
-  
+
   // Redirect unauthenticated users from protected routes to sign-in
   if (isProtectedRoute && !sessionCookie) {
     const signInUrl = new URL('/sign-in', request.url)
     signInUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(signInUrl)
   }
-  
-  // Allow onboarding route for authenticated users
-  if (isOnboardingRoute && sessionCookie) {
-    return NextResponse.next()
-  }
-  
+
+
+
   // Allow verification routes for authenticated users (don't redirect to dashboard)
   if (isVerificationRoute && sessionCookie) {
     return NextResponse.next()
   }
-  
-  // Redirect authenticated users from auth pages to onboarding or dashboard
+
+  // Redirect authenticated users from auth pages to dashboard
   if (isAuthRoute && sessionCookie) {
     const redirectTo = request.nextUrl.searchParams.get('redirect')
-    const dashboardUrl = new URL(redirectTo || '/onboarding', request.url)
+    const dashboardUrl = new URL(redirectTo || '/dashboard', request.url)
     return NextResponse.redirect(dashboardUrl)
   }
-  
+
   return NextResponse.next()
 }
 

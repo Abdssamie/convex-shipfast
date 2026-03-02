@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -11,14 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Logo } from "@/components/logo";
-import Link from "next/link";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Upload, ArrowRight, ArrowLeft, Check } from "lucide-react";
 
 type OnboardingStep = 1 | 2 | 3;
 
-export default function OnboardingPage() {
-  const router = useRouter();
+export function OnboardingModal({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(1);
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -72,7 +69,7 @@ export default function OnboardingPage() {
           notifications,
         },
       });
-      router.push("/dashboard");
+      onOpenChange(false);
     } catch (error) {
       console.error("Failed to complete onboarding:", error);
     }
@@ -81,7 +78,7 @@ export default function OnboardingPage() {
   const handleSkip = async () => {
     try {
       await completeOnboarding({});
-      router.push("/dashboard");
+      onOpenChange(false);
     } catch (error) {
       console.error("Failed to skip onboarding:", error);
     }
@@ -102,22 +99,15 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="flex w-full max-w-2xl flex-col gap-6">
-        <Link href="/" className="flex items-center gap-2 self-center font-medium">
-          <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
-            <Logo size={24} />
-          </div>
-          ShadcnStore
-        </Link>
-
-        <Card>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-transparent border-none shadow-none focus:outline-none focus-visible:ring-0 [&>button]:hidden">
+        <Card className="w-full">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Welcome to ShadcnStore</CardTitle>
                 <CardDescription>
-                  Let&apos;s get you set up in just a few steps
+                  Let's get you set up in just a few steps
                 </CardDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={handleSkip}>
@@ -234,9 +224,9 @@ export default function OnboardingPage() {
                   <div className="mx-auto bg-primary/10 text-primary flex size-16 items-center justify-center rounded-full">
                     <Check className="size-8" />
                   </div>
-                  <h3 className="text-lg font-semibold">You&apos;re all set!</h3>
+                  <h3 className="text-lg font-semibold">You're all set!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Here&apos;s a quick overview of what you can do
+                    Here's a quick overview of what you can do
                   </p>
                 </div>
 
@@ -288,7 +278,7 @@ export default function OnboardingPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

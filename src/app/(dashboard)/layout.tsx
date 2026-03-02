@@ -9,6 +9,9 @@ import { ThemeCustomizer, ThemeCustomizerTrigger } from "@/components/theme-cust
 import { UpgradeToProButton } from "@/components/upgrade-to-pro-button";
 import { useSidebarConfig } from "@/hooks/use-sidebar-config";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { OnboardingModal } from "@/components/onboarding-modal";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function DashboardLayout({
   children,
@@ -17,6 +20,15 @@ export default function DashboardLayout({
 }) {
   const [themeCustomizerOpen, setThemeCustomizerOpen] = React.useState(false);
   const { config } = useSidebarConfig();
+
+  const user = useQuery(api.user.getCurrentProfile);
+  const [showOnboarding, setShowOnboarding] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user && user.hasCompletedOnboarding === false) {
+      setShowOnboarding(true);
+    }
+  }, [user]);
 
   return (
     <ErrorBoundary>
@@ -75,6 +87,8 @@ export default function DashboardLayout({
           onOpenChange={setThemeCustomizerOpen}
         />
         <UpgradeToProButton />
+
+        <OnboardingModal open={showOnboarding} onOpenChange={setShowOnboarding} />
       </SidebarProvider>
     </ErrorBoundary>
   );
