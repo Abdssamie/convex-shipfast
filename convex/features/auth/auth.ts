@@ -28,6 +28,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
+      revokeSessionsOnPasswordReset: true,
       sendResetPassword: async ({ user, url }: { user: User; url: string }) => {
         await authEmailHandlers.sendPasswordResetEmail({
           email: user.email,
