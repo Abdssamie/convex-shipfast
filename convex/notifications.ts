@@ -9,7 +9,11 @@ export const list = query({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Not authenticated");
+      return {
+        page: [],
+        isDone: true,
+        continueCursor: ""
+      };
     }
 
     const userId = identity.subject;
@@ -28,13 +32,13 @@ export const getUnreadCount = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Not authenticated");
+      return 0; // Return gracefully if no user identity instead of an error boundary crash
     }
 
     const userId = identity.subject;
     const unreadNotifications = await ctx.db
       .query("notifications")
-      .withIndex("by_user_and_read", (q) => 
+      .withIndex("by_user_and_read", (q) =>
         q.eq("userId", userId).eq("read", false)
       )
       .collect();
@@ -81,7 +85,7 @@ export const markAllAsRead = mutation({
     const userId = identity.subject;
     const unreadNotifications = await ctx.db
       .query("notifications")
-      .withIndex("by_user_and_read", (q) => 
+      .withIndex("by_user_and_read", (q) =>
         q.eq("userId", userId).eq("read", false)
       )
       .collect();
