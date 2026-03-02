@@ -32,7 +32,7 @@ export const getUnreadCount = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      return 0; // Return gracefully if no user identity instead of an error boundary crash
+      return 0; 
     }
 
     const userId = identity.subject;

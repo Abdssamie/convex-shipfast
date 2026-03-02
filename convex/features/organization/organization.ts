@@ -12,7 +12,30 @@ export const getCurrentOrganization = query({
     if (!identity) return null;
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    return await auth.api.getFullOrganization({ headers }).catch(() => null);
+    const org = await auth.api.getFullOrganization({ headers }).catch(() => null);
+    
+    if (!org) return null;
+
+    return {
+      id: org.id,
+      name: org.name,
+      slug: org.slug,
+      logo: org.logo,
+      metadata: org.metadata,
+      createdAt: org.createdAt?.getTime(),
+      members: org.members?.map((m) => ({
+        id: m.id,
+        userId: m.userId,
+        role: m.role,
+        createdAt: m.createdAt?.getTime(),
+        user: m.user ? {
+          id: m.user.id,
+          name: m.user.name,
+          email: m.user.email,
+          image: m.user.image,
+        } : undefined,
+      })) || [],
+    };
   },
 });
 
@@ -43,6 +66,17 @@ export const listUserOrganizations = query({
     if (!identity) return [];
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    return await auth.api.listOrganizations({ headers }).catch(() => []);
+    const orgs = await auth.api.listOrganizations({ headers }).catch(() => []);
+
+    if (!orgs) return [];
+
+    return orgs.map((org) => ({
+      id: org.id,
+      name: org.name,
+      slug: org.slug,
+      logo: org.logo,
+      metadata: org.metadata,
+      createdAt: org.createdAt?.getTime(),
+    }));
   },
 });

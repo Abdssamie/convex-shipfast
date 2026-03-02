@@ -28,7 +28,18 @@ export const createOrganization = mutation({
       headers,
     });
 
-    return organization;
+    if (!organization) {
+      throw new Error("Failed to create organization");
+    }
+
+    return {
+      id: organization.id,
+      name: organization.name,
+      slug: organization.slug,
+      logo: organization.logo,
+      metadata: organization.metadata,
+      createdAt: organization.createdAt?.getTime(),
+    };
   },
 });
 
@@ -56,7 +67,18 @@ export const inviteMember = mutation({
       headers,
     });
 
-    return invitation;
+    if (!invitation) {
+      throw new Error("Failed to create invitation");
+    }
+
+    return {
+      id: invitation.id,
+      email: invitation.email,
+      role: invitation.role,
+      status: invitation.status,
+      expiresAt: invitation.expiresAt?.getTime(),
+      createdAt: invitation.createdAt?.getTime(),
+    };
   },
 });
 
@@ -152,7 +174,18 @@ export const updateOrganization = mutation({
       headers,
     });
 
-    return organization;
+    if (!organization) {
+      throw new Error("Failed to update organization");
+    }
+
+    return {
+      id: organization.id,
+      name: organization.name,
+      slug: organization.slug,
+      logo: organization.logo,
+      metadata: organization.metadata,
+      createdAt: organization.createdAt?.getTime(),
+    };
   },
 });
 
