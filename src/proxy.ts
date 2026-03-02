@@ -75,7 +75,7 @@ export async function proxy(request: NextRequest) {
   const isVerificationRoute = pathname.startsWith('/verify-email')
 
   // Auth routes - redirect if session cookie exists
-  const isAuthRoute = ['/sign-in', '/sign-up', '/forgot-password'].some(
+  const isAuthRoute = ['/sign-in', '/sign-up'].some(
     (route) => pathname.startsWith(route)
   )
 
