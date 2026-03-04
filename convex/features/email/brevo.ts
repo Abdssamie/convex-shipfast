@@ -24,12 +24,14 @@ type BrevoResponseSuccess = {
 
 type BrevoResponseBody = { message?: string; messageIds?: string[] };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
 const parseBrevoResponseBody = (value: unknown): BrevoResponseBody | null => {
-  if (!value || typeof value !== "object") return null;
-  const record = value as Record<string, unknown>;
-  const message = typeof record.message === "string" ? record.message : undefined;
-  const messageIds = Array.isArray(record.messageIds)
-    ? record.messageIds.filter((item): item is string => typeof item === "string")
+  if (!isRecord(value)) return null;
+  const message = typeof value.message === "string" ? value.message : undefined;
+  const messageIds = Array.isArray(value.messageIds)
+    ? value.messageIds.filter((item): item is string => typeof item === "string")
     : undefined;
   return { message, messageIds };
 };
