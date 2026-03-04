@@ -72,4 +72,20 @@ describe("Brevo Sender", () => {
         }
     });
 
+    test("sendBrevoTemplate handles invalid JSON", async () => {
+        fetchMock = mock(() => Promise.resolve(new Response("not-json", { status: 201 })));
+        global.fetch = fetchMock as any;
+
+        const result = await sendBrevoTemplate({
+            flow: "welcome",
+            to: { email: "user@test.com", name: "User" },
+            templateId: 10,
+        });
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.value.messageIds).toEqual([]);
+        }
+    });
+
 });
