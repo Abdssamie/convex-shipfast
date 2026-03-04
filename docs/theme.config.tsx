@@ -7,7 +7,9 @@ const config: DocsThemeConfig = {
   chat: {
     link: "https://example.com",
   },
-  docsRepositoryBase: "https://example.com",
+  editLink: {
+    component: null,
+  },
   footer: {
     content: "Docs",
   },
