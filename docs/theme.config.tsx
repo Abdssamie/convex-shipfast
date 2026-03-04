@@ -9,7 +9,7 @@ const config: DocsThemeConfig = {
   },
   docsRepositoryBase: "https://example.com",
   footer: {
-    text: "Docs",
+    content: "Docs",
   },
 };
 
