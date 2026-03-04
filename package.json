@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "docs:dev": "bun --cwd docs dev",
+    "docs:build": "bun --cwd docs build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
