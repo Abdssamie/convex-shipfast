@@ -91,6 +91,26 @@ describe("Brevo Sender", () => {
         }
     });
 
+    test("filters non-string messageIds from Brevo response", async () => {
+        fetchMock = mock(() =>
+            Promise.resolve(
+                new Response(JSON.stringify({ messageIds: ["123", 456, null] }), { status: 201 })
+            )
+        );
+        globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+        const result = await sendBrevoTemplate({
+            flow: "welcome",
+            to: { email: "user@test.com", name: "User" },
+            templateId: 10,
+        });
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.value.messageIds).toEqual(["123"]);
+        }
+    });
+
     test("sendBrevoTemplate handles invalid JSON", async () => {
         fetchMock = mock(() => Promise.resolve(new Response("not-json", { status: 201 })));
         globalThis.fetch = fetchMock as unknown as typeof fetch;

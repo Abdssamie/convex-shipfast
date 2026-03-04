@@ -24,11 +24,21 @@ type BrevoResponseSuccess = {
 
 type BrevoResponseBody = { message?: string; messageIds?: string[] };
 
+const parseBrevoResponseBody = (value: unknown): BrevoResponseBody | null => {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+  const message = typeof record.message === "string" ? record.message : undefined;
+  const messageIds = Array.isArray(record.messageIds)
+    ? record.messageIds.filter((item): item is string => typeof item === "string")
+    : undefined;
+  return { message, messageIds };
+};
+
 const parseBrevoJson = async (
   response: Response
 ): Promise<BrevoResponseBody | null> => {
   try {
-    return (await response.json()) as BrevoResponseBody;
+    return parseBrevoResponseBody(await response.json());
   } catch {
     return null;
   }
