@@ -17,7 +17,12 @@ const sendBetterAuthEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayl
       tags: payload.tags,
     });
   } catch (error) {
-    logger.warn("brevo_email_failed", { error });
+    if (error && typeof error === "object") {
+      logger.warn("brevo_email_failed", error as Record<string, unknown>);
+      return;
+    }
+
+    logger.warn("brevo_email_failed", undefined);
   }
 };
 
