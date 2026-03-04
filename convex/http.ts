@@ -13,10 +13,10 @@ const RATE_LIMITED_PATHS = [
   "/api/auth/reset-password",
 ];
 
-type RouteOptions = Parameters<typeof http.route>[0];
-type RouteHandler =
-  NonNullable<RouteOptions["handler"]> &
-  ((request: Request) => Promise<Response>);
+type RouteOptions = Parameters<typeof http.route>[0] & { path?: string };
+type RouteHandler = ((request: Request) => Promise<Response>) & {
+  isHttp: true;
+};
 
 // Create a wrapper for the http router to add rate limiting
 const createRateLimitedRouter = () => {
@@ -69,9 +69,8 @@ const createRateLimitedRouter = () => {
   // Override the route method to add rate limiting middleware
   const rateLimitedRoute: typeof http.route = (options: RouteOptions) => {
     // Check if this is a rate-limited auth endpoint
-    const routePath = "path" in options ? options.path : options.pathPrefix;
     const isRateLimited = RATE_LIMITED_PATHS.some((path) =>
-      routePath.includes(path)
+      options.path?.includes(path)
     );
 
     const nextOptions: RouteOptions =
@@ -91,8 +90,6 @@ const createRateLimitedRouter = () => {
 createRateLimitedRouter();
 
 authComponent.registerRoutes(http, createAuth);
-// Type assertion needed: Polar's registerRoutes expects HttpRouter but auth component
-// modifies the router type. This is safe as both use the same underlying httpRouter.
-polar.registerRoutes(http as any);
+polar.registerRoutes(http);
 
 export default http;
