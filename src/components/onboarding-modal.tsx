@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Upload, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { siteConfig } from "@/config/site";
 
 type OnboardingStep = 1 | 2 | 3;
 
@@ -105,7 +106,7 @@ export function OnboardingModal({ open, onOpenChange }: { open: boolean, onOpenC
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Welcome to ShadcnStore</CardTitle>
+                <CardTitle>Welcome to {siteConfig.name}</CardTitle>
                 <CardDescription>
                   Let's get you set up in just a few steps
                 </CardDescription>

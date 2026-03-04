@@ -5,6 +5,7 @@ import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Logo } from "./logo"
+import { siteConfig } from "@/config/site"
 
 export function SidebarNotification() {
   const [isVisible, setIsVisible] = React.useState(true)
@@ -35,7 +36,7 @@ export function SidebarNotification() {
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
-                ShadcnStore
+                {siteConfig.name}
               </a>
             </div>
           </h3>

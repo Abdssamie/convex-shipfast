@@ -10,6 +10,7 @@ import { Logo } from "@/components/logo"
 import { SidebarNotification } from "@/components/sidebar-notification"
 import { NotificationsPopover } from "@/components/notifications-popover"
 import { OrganizationSwitcher } from "@/components/organization-switcher"
+import { siteConfig } from "@/config/site"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
@@ -25,7 +26,7 @@ import {
 
 const data = {
   user: {
-    name: "ShadcnStore",
+    name: siteConfig.name,
     email: "store@example.com",
     avatar: "",
   },
@@ -95,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Logo size={24} className="text-current" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">ShadcnStore</span>
+                  <span className="truncate font-medium">{siteConfig.name}</span>
                   <span className="truncate text-xs">Admin Dashboard</span>
                 </div>
               </Link>

@@ -15,6 +15,7 @@ import Link from "next/link"
 import { authClient } from "@/lib/auth/client"
 import { toast } from "sonner"
 import { Mail } from "lucide-react"
+import { siteConfig } from "@/config/site"
 
 export default function ResetPasswordSentPage() {
   const searchParams = useSearchParams()
@@ -85,7 +86,7 @@ export default function ResetPasswordSentPage() {
           <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
             <Logo size={24} />
           </div>
-          ShadcnStore
+          {siteConfig.name}
         </Link>
         <Card>
           <CardHeader className="text-center">

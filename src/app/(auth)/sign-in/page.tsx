@@ -1,6 +1,7 @@
 import { LoginForm1 } from "./components/login-form-1"
 import { Logo } from "@/components/logo"
 import Link from "next/link"
+import { siteConfig } from "@/config/site"
 
 export default function Page() {
   return (
@@ -10,7 +11,7 @@ export default function Page() {
           <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
             <Logo size={24} />
           </div>
-          ShadcnStore
+          {siteConfig.name}
         </Link>
         <LoginForm1 />
       </div>

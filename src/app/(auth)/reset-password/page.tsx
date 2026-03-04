@@ -17,6 +17,7 @@ import Link from "next/link"
 import { authClient } from "@/lib/auth/client"
 import { toast } from "sonner"
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
+import { siteConfig } from "@/config/site"
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams()
@@ -113,7 +114,7 @@ export default function ResetPasswordPage() {
             <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
               <Logo size={24} />
             </div>
-            ShadcnStore
+            {siteConfig.name}
           </Link>
           <Card>
             <CardHeader className="text-center">
@@ -138,7 +139,7 @@ export default function ResetPasswordPage() {
           <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
             <Logo size={24} />
           </div>
-          ShadcnStore
+          {siteConfig.name}
         </Link>
         <Card>
           <CardHeader className="text-center">
