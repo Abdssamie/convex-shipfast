@@ -1,5 +1,6 @@
 import type { EmailFlow } from "./config";
 import { sendEmail } from "./index";
+import { logger } from "../../lib/logger";
 
 type BetterAuthEmailPayload = {
   to: { email: string; name?: string };
@@ -16,7 +17,7 @@ const sendBetterAuthEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayl
       tags: payload.tags,
     });
   } catch (error) {
-    console.warn("brevo_email_failed", error);
+    logger.warn("brevo_email_failed", { error });
   }
 };
 

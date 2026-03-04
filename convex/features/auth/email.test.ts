@@ -1,6 +1,7 @@
 import { describe, expect, test, beforeEach, afterEach, mock, spyOn } from "bun:test";
 import * as emailModule from "../email";
 import { ok, err } from "../shared/result";
+import { logger } from "../../lib/logger";
 import {
     sendVerificationEmail,
     sendPasswordResetEmail,
@@ -11,11 +12,11 @@ import {
 
 describe("Auth Email Handlers", () => {
     let sendEmailSpy: ReturnType<typeof spyOn>;
-    let consoleWarnSpy: ReturnType<typeof spyOn>;
+    let loggerWarnSpy: ReturnType<typeof spyOn>;
 
     beforeEach(() => {
         sendEmailSpy = spyOn(emailModule, "sendEmail").mockResolvedValue(ok({ messageIds: ["mock_id"] }));
-        consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => { });
+        loggerWarnSpy = spyOn(logger, "warn").mockImplementation(() => { });
     });
 
     afterEach(() => {
@@ -97,7 +98,7 @@ describe("Auth Email Handlers", () => {
         await sendWelcomeEmail({ email: "test@test.com" });
 
         expect(sendEmailSpy).toHaveBeenCalledTimes(1);
-        expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-        expect(consoleWarnSpy).toHaveBeenCalledWith("brevo_email_failed", { code: "brevo_request_failed", flow: "welcome" });
+        expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+        expect(loggerWarnSpy).toHaveBeenCalledWith("brevo_email_failed", { code: "brevo_request_failed", flow: "welcome" });
     });
 });
