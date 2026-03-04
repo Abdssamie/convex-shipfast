@@ -1,23 +1,38 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 
-test("branding uses site config", () => {
-  const brandingFiles = [
-    "src/components/site-header.tsx",
-    "src/components/site-footer.tsx",
-    "src/components/app-sidebar.tsx",
-    "src/components/onboarding-modal.tsx",
-    "src/components/sidebar-notification.tsx",
-    "src/app/(auth)/layout.tsx",
-    "src/app/(auth)/sign-in/page.tsx",
-    "src/app/(auth)/sign-up/page.tsx",
-    "src/app/(auth)/forgot-password/page.tsx",
-    "src/app/(auth)/reset-password/page.tsx",
-    "src/app/(auth)/reset-password-sent/page.tsx",
-    "convex/user.ts",
-  ];
+const appRoot = path.join(process.cwd(), "src", "app");
+const archiveFolderName = "_archive";
+const brandingMatch = "ShadcnStore";
+const allowedExtensions = new Set([".ts", ".tsx", ".js", ".jsx", ".mdx"]);
 
-  for (const filePath of brandingFiles) {
+const collectAppFiles = (dirPath: string): string[] => {
+  const entries = readdirSync(dirPath, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === archiveFolderName) {
+        continue;
+      }
+      files.push(...collectAppFiles(fullPath));
+      continue;
+    }
+
+    if (entry.isFile() && allowedExtensions.has(path.extname(entry.name))) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+};
+
+test("branding uses site config across app routes", () => {
+  const appFiles = collectAppFiles(appRoot);
+
+  for (const filePath of appFiles) {
     const file = readFileSync(filePath, "utf8");
-    expect(file).not.toContain("ShadcnStore");
+    expect(file).not.toContain(brandingMatch);
   }
 });
