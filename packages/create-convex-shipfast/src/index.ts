@@ -22,13 +22,15 @@ type Degit = (
   clone: (target: string) => Promise<void>;
 };
 
+type DegitModule = {
+  default: Degit;
+};
+
 const run = async (): Promise<void> => {
   const degitSpecifier =
     process.env["CREATE_CONVEX_SHIPFAST_DEGIT"] ?? "degit";
-  const degitModule = (await import(degitSpecifier)) as unknown as {
-    default: Degit;
-  };
-  const degit = degitModule.default;
+  const degitModule = (await import(degitSpecifier)) as DegitModule;
+  const { default: degit } = degitModule;
   const { targetDir } = parseArgs(process.argv.slice(2));
   const fullPath = path.resolve(process.cwd(), targetDir);
 
