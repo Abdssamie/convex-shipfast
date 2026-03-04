@@ -1,13 +1,16 @@
 {
-  "name": "shadcn-dashboard-nextjs",
+  "name": "fluxkit-dashboard-nextjs",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "docs:dev": "bun --cwd docs dev",
+    "docs:build": "bun --cwd docs build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "TZ=UTC bun test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
