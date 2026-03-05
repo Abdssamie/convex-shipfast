@@ -152,7 +152,7 @@ export const completeOnboarding = mutation({
     await ctx.scheduler.runAfter(0, internal.notifications.createNotification, {
       userId: identity.subject,
       type: "welcome",
-      title: "Welcome to ShadcnStore!",
+      title: "Welcome to FluxKit!",
       message: "Thanks for joining us. Explore the dashboard to get started with your tasks and projects.",
     });
 

@@ -23,7 +23,7 @@ export function LoginForm3({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    
+
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
@@ -33,7 +33,7 @@ export function LoginForm3({
         email,
         password,
       })
-      
+
       if (result.error) {
         toast.error(result.error.message || "Failed to sign in")
       } else {
@@ -69,13 +69,13 @@ export function LoginForm3({
                   <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
                     <Logo size={24} />
                   </div>
-                  <span className="text-xl">ShadcnStore</span>
+                  <span className="text-xl">FluxKit</span>
                 </Link>
               </div>
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your ShadcnStore account
+                  Login to your FluxKit account
                 </p>
               </div>
               <div className="grid gap-3">
@@ -100,12 +100,12 @@ export function LoginForm3({
                     Forgot your password?
                   </a>
                 </div>
-                <Input 
-                  id="password" 
+                <Input
+                  id="password"
                   name="password"
-                  type="password" 
-                  defaultValue="password" 
-                  required 
+                  type="password"
+                  defaultValue="password"
+                  required
                   disabled={isLoading}
                 />
               </div>
@@ -127,9 +127,9 @@ export function LoginForm3({
                   </svg>
                   <span className="sr-only">Login with Apple</span>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  type="button" 
+                <Button
+                  variant="outline"
+                  type="button"
                   className="w-full cursor-pointer"
                   onClick={handleGoogleSignIn}
                   disabled={isLoading}

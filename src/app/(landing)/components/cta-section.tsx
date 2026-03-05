@@ -55,13 +55,13 @@ export function CTASection() {
               {/* CTA Buttons */}
               <div className='flex flex-col justify-center gap-4 sm:flex-row sm:gap-6'>
                 <Button size='lg' className='cursor-pointer px-8 py-6 text-lg font-medium' asChild>
-                  <a href='https://shadcnstore.com/blocks' target='_blank' rel='noopener noreferrer'>
+                  <a href='#' target='_blank' rel='noopener noreferrer'>
                     <Package className='me-2 size-5' />
                     Browse Components
                   </a>
                 </Button>
                 <Button variant='outline' size='lg' className='cursor-pointer px-8 py-6 text-lg font-medium group' asChild>
-                  <a href='https://github.com/silicondeck/shadcn-dashboard-landing-template' target='_blank' rel='noopener noreferrer'>
+                  <a href='#' target='_blank' rel='noopener noreferrer'>
                     <Github className='me-2 size-5' />
                     View on GitHub
                     <ArrowRight className='ms-2 size-4 transition-transform group-hover:translate-x-1' />
@@ -72,17 +72,17 @@ export function CTASection() {
               {/* Trust Indicators */}
               <div className='text-muted-foreground flex flex-wrap items-center justify-center gap-6 text-sm'>
                 <div className='flex items-center gap-2'>
-                    <div className='size-2 rounded-full bg-green-600 dark:bg-green-400 me-1' />
+                  <div className='size-2 rounded-full bg-green-600 dark:bg-green-400 me-1' />
 
                   <span>Free components available</span>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <div className='size-2 rounded-full bg-blue-600 dark:bg-blue-400 me-1' />
+                  <div className='size-2 rounded-full bg-blue-600 dark:bg-blue-400 me-1' />
 
                   <span>Commercial license included</span>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <div className='size-2 rounded-full bg-purple-600 dark:bg-purple-400 me-1' />
+                  <div className='size-2 rounded-full bg-purple-600 dark:bg-purple-400 me-1' />
 
                   <span>Regular updates & support</span>
                 </div>

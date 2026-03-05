@@ -73,7 +73,7 @@ describe("Auth Email Handlers", () => {
             params: {
                 inviteUrl: "http://invite",
                 inviterName: "",
-                appName: "FastShip"
+                appName: "FastShip",
             },
             tags: ["better-auth", "invitation"],
         });
