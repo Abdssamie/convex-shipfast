@@ -29,7 +29,7 @@ describe("Auth Email Handlers", () => {
         expect(sendEmailSpy).toHaveBeenCalledWith({
             flow: "email_verification",
             to: { email: "test@test.com", name: "Test User" },
-            params: { url: "http://verify", email: "test@test.com", name: "Test User" },
+            params: { verificationUrl: "http://verify", email: "test@test.com", name: "Test User" },
             tags: ["better-auth", "email-verification"],
         });
     });
@@ -41,7 +41,7 @@ describe("Auth Email Handlers", () => {
         expect(sendEmailSpy).toHaveBeenCalledWith({
             flow: "password_reset",
             to: { email: "test@test.com", name: undefined },
-            params: { url: "http://reset", email: "test@test.com", name: "" },
+            params: { resetUrl: "http://reset", email: "test@test.com", name: "" },
             tags: ["better-auth", "password-reset"],
         });
     });
@@ -53,7 +53,7 @@ describe("Auth Email Handlers", () => {
         expect(sendEmailSpy).toHaveBeenCalledWith({
             flow: "magic_link",
             to: { email: "test@test.com" },
-            params: { url: "http://magic", email: "test@test.com" },
+            params: { magicLink: "http://magic", email: "test@test.com" },
             tags: ["better-auth", "magic-link"],
         });
     });
@@ -71,11 +71,9 @@ describe("Auth Email Handlers", () => {
             flow: "invitation",
             to: { email: "test@test.com" },
             params: {
-                inviteLink: "http://invite",
-                email: "test@test.com",
-                invitedByEmail: "admin@test.com",
-                invitedByName: "",
-                organizationName: "Test Org"
+                inviteUrl: "http://invite",
+                inviterName: "",
+                appName: "FastShip"
             },
             tags: ["better-auth", "invitation"],
         });
