@@ -1,5 +1,6 @@
 import { Heart } from "lucide-react"
 import Link from "next/link"
+import { siteConfig } from "@/config/site"
 
 export function SiteFooter() {
   return (
@@ -11,12 +12,12 @@ export function SiteFooter() {
             <Heart className="h-4 w-4 fill-red-500 text-red-500" />
             <span>by</span>
             <Link
-              href="#"
+              href="https://shadcnstore.com"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-foreground hover:text-primary transition-colors"
             >
-              FluxKit Team
+              {siteConfig.name} Team
             </Link>
           </div>
           <p className="text-xs text-muted-foreground">

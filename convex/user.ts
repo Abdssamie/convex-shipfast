@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./features/auth/auth";
 import { internal } from "./_generated/api";
+import { siteConfig } from "../src/config/site";
 
 export const getCurrentProfile = query({
   args: {},
@@ -152,7 +153,7 @@ export const completeOnboarding = mutation({
     await ctx.scheduler.runAfter(0, internal.notifications.createNotification, {
       userId: identity.subject,
       type: "welcome",
-      title: "Welcome to FluxKit!",
+      title: `Welcome to ${siteConfig.name}!`,
       message: "Thanks for joining us. Explore the dashboard to get started with your tasks and projects.",
     });
 

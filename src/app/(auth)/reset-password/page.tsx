@@ -17,12 +17,13 @@ import Link from "next/link"
 import { authClient } from "@/lib/auth/client"
 import { toast } from "sonner"
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
+import { siteConfig } from "@/config/site"
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const token = searchParams.get("token")
-
+  
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -39,7 +40,7 @@ export default function ResetPasswordPage() {
 
   const validatePassword = (pwd: string): { valid: boolean; errors: string[] } => {
     const errors: string[] = []
-
+    
     if (pwd.length < 8) {
       errors.push("At least 8 characters")
     }
@@ -83,17 +84,17 @@ export default function ResetPasswordPage() {
         newPassword: password,
         token,
       })
-
+      
       setIsSuccess(true)
       toast.success("Password reset successfully!")
-
+      
       setTimeout(() => {
         router.push("/sign-in")
       }, 2000)
     } catch (error) {
       toast.error(
-        error instanceof Error
-          ? error.message
+        error instanceof Error 
+          ? error.message 
           : "Failed to reset password. The link may be expired or invalid."
       )
     } finally {
@@ -113,7 +114,7 @@ export default function ResetPasswordPage() {
             <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
               <Logo size={24} />
             </div>
-            FluxKit
+            {siteConfig.name}
           </Link>
           <Card>
             <CardHeader className="text-center">
@@ -138,7 +139,7 @@ export default function ResetPasswordPage() {
           <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
             <Logo size={24} />
           </div>
-          FluxKit
+          {siteConfig.name}
         </Link>
         <Card>
           <CardHeader className="text-center">
@@ -222,9 +223,9 @@ export default function ResetPasswordPage() {
                     <p className="text-xs text-red-600">Passwords do not match</p>
                   )}
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full cursor-pointer"
+                <Button 
+                  type="submit" 
+                  className="w-full cursor-pointer" 
                   disabled={isLoading || !passwordValidation.valid || password !== confirmPassword}
                 >
                   {isLoading ? "Resetting..." : "Reset Password"}

@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Mail, MessageCircle, Github, BookOpen } from 'lucide-react'
+import { siteConfig } from '@/config/site'
 
 const contactFormSchema = z.object({
   firstName: z.string().min(2, {
@@ -63,7 +64,7 @@ export function ContactSection() {
             Need help or have questions?
           </h2>
           <p className="text-lg text-muted-foreground">
-            Our team is here to help you get the most out of FluxKit. Choose the best way to reach out to us.
+            Our team is here to help you get the most out of {siteConfig.name}. Choose the best way to reach out to us.
           </p>
         </div>
 
@@ -101,7 +102,7 @@ export function ContactSection() {
                   Report bugs, request features, or contribute to our open source repository.
                 </p>
                 <Button variant="outline" size="sm" className="cursor-pointer" asChild>
-                  <a href="https://github.com/silicondeck/shadcn-dashboard-landing-template/issues" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/get-convex/convex-shipfast/issues" target="_blank" rel="noopener noreferrer">
                     View on GitHub
                   </a>
                 </Button>
@@ -202,7 +203,7 @@ export function ContactSection() {
                           <FormLabel>Message</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Tell us how we can help you with FluxKit components..."
+                              placeholder="Tell us how we can help you..."
                               rows={10}
                               className="min-h-50"
                               {...field}

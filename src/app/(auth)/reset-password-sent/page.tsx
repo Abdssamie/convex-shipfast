@@ -15,6 +15,7 @@ import Link from "next/link"
 import { authClient } from "@/lib/auth/client"
 import { toast } from "sonner"
 import { Mail } from "lucide-react"
+import { siteConfig } from "@/config/site"
 
 export default function ResetPasswordSentPage() {
   const searchParams = useSearchParams()
@@ -56,7 +57,7 @@ export default function ResetPasswordSentPage() {
       toast.success("Reset email sent again!")
       setCanResend(false)
       setCountdown(60)
-
+      
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -85,7 +86,7 @@ export default function ResetPasswordSentPage() {
           <div className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-md">
             <Logo size={24} />
           </div>
-          FluxKit
+          {siteConfig.name}
         </Link>
         <Card>
           <CardHeader className="text-center">
@@ -112,8 +113,8 @@ export default function ResetPasswordSentPage() {
                 {isResending
                   ? "Sending..."
                   : canResend
-                    ? "Resend Email"
-                    : `Resend in ${countdown}s`}
+                  ? "Resend Email"
+                  : `Resend in ${countdown}s`}
               </Button>
               <div className="text-center text-sm">
                 <Link href="/sign-in" className="underline underline-offset-4">

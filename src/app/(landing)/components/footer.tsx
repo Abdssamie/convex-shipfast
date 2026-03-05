@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Logo } from '@/components/logo'
 import { Github, Twitter, Linkedin, Youtube, Heart } from 'lucide-react'
+import { siteConfig } from '@/config/site'
 
 const newsletterSchema = z.object({
   email: z.string().email({
@@ -51,7 +52,7 @@ const footerLinks = {
 
 const socialLinks = [
   { name: 'Twitter', href: '#', icon: Twitter },
-  { name: 'GitHub', href: '#', icon: Github },
+  { name: 'GitHub', href: 'https://github.com/get-convex/convex-shipfast', icon: Github },
   { name: 'LinkedIn', href: '#', icon: Linkedin },
   { name: 'YouTube', href: '#', icon: Youtube },
 ]
@@ -109,13 +110,13 @@ export function LandingFooter() {
           {/* Brand Column */}
           <div className="col-span-4 lg:col-span-2 max-w-2xl">
             <div className="flex items-center space-x-2 mb-4 max-lg:justify-center">
-              <a href="#" target='_blank' className="flex items-center space-x-2 cursor-pointer">
+              <a href="/" className="flex items-center space-x-2 cursor-pointer">
                 <Logo size={32} />
-                <span className="font-bold text-xl">FluxKit</span>
+                <span className="font-bold text-xl">{siteConfig.name}</span>
               </a>
             </div>
             <p className="text-muted-foreground mb-6 max-lg:text-center max-lg:flex max-lg:justify-center">
-              Accelerating web development with curated blocks, templates, landing pages, and admin dashboards designed for modern developers.
+              {siteConfig.tagline}.
             </p>
             <div className="flex space-x-4 max-lg:justify-center">
               {socialLinks.map((social) => (
@@ -208,8 +209,8 @@ export function LandingFooter() {
               <span>Made with</span>
               <Heart className="h-4 w-4 text-red-500 fill-current" />
               <span>by</span>
-              <a href="#" target='_blank' className="font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
-                FluxKit
+              <a href="/" className="font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
+                {siteConfig.name}
               </a>
             </div>
             <span className="hidden sm:inline">•</span>

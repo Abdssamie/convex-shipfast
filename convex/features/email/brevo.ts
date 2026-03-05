@@ -22,13 +22,37 @@ type BrevoResponseSuccess = {
   messageIds: string[];
 };
 
+type BrevoResponseBody = { message?: string; messageIds?: string[] };
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const parseBrevoResponseBody = (value: unknown): BrevoResponseBody | null => {
+  if (!isRecord(value)) return null;
+  const message = typeof value.message === "string" ? value.message : undefined;
+  const messageIds = Array.isArray(value.messageIds)
+    ? value.messageIds.filter((item): item is string => typeof item === "string")
+    : undefined;
+  return { message, messageIds };
+};
+
+const parseBrevoJson = async (
+  response: Response
+): Promise<BrevoResponseBody | null> => {
+  try {
+    return parseBrevoResponseBody(await response.json());
+  } catch {
+    return null;
+  }
+};
+
 const createBrevoRequest = async (
   config: BrevoConfig,
   payload: BrevoEmailPayload,
   sandbox?: boolean,
   maxRetries = 3
 ): Promise<Response> => {
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -102,25 +126,19 @@ export const sendBrevoTemplate = async (params: {
   try {
     const response = await createBrevoRequest(config, payload, params.sandbox);
 
-    let body: any = {};
-    try {
-      body = await response.json();
-    } catch (jsonError) {
-      // Log JSON parse errors for debugging
-      console.error("Failed to parse Brevo response:", jsonError);
-    }
+    const body = await parseBrevoJson(response);
 
     if (response.ok) {
       const messageIds =
         body && typeof body === "object" && "messageIds" in body
-          ? ((body as { messageIds?: string[] }).messageIds ?? [])
+          ? (body.messageIds ?? [])
           : [];
       return ok({ messageIds });
     }
 
     const reason =
       body && typeof body === "object" && "message" in body
-        ? String((body as { message?: string }).message)
+        ? String(body.message)
         : response.statusText;
 
     return err(errorBody(response.status, reason));

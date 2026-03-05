@@ -1,20 +1,24 @@
 import type { Metadata } from 'next'
 import { LandingPageContent } from './landing-page-content'
+import { siteConfig } from '@/config/site'
+
+const title = `${siteConfig.name} - ${siteConfig.tagline}`
+const description = `${siteConfig.tagline}.`
 
 // Metadata for the landing page
 export const metadata: Metadata = {
-  title: 'FluxKit - Modern Admin Dashboard Template',
-  description: 'A beautiful and comprehensive admin dashboard template built with React, Next.js, TypeScript, and shadcn/ui. Perfect for building modern web applications.',
-  keywords: ['admin dashboard', 'react', 'nextjs', 'typescript', 'shadcn/ui', 'tailwind css'],
+  title,
+  description,
+  keywords: ['saas boilerplate', 'react', 'nextjs', 'typescript', 'tailwind css'],
   openGraph: {
-    title: 'FluxKit - Modern Admin Dashboard Template',
-    description: 'A beautiful and comprehensive admin dashboard template built with React, Next.js, TypeScript, and shadcn/ui.',
+    title,
+    description,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FluxKit - Modern Admin Dashboard Template',
-    description: 'A beautiful and comprehensive admin dashboard template built with React, Next.js, TypeScript, and shadcn/ui.',
+    title,
+    description,
   },
 }
 
