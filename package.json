@@ -7,8 +7,6 @@
     "docs:build": "bun --cwd docs build",
     "dev": "next dev",
     "build": "next build",
-    "docs:dev": "bun --cwd docs dev",
-    "docs:build": "bun --cwd docs build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
