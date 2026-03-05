@@ -84,20 +84,28 @@ Before you begin, ensure you have the following installed:
 
 ## Quick Start
 
-1. **Clone the repository**
+1. **Scaffold with the CLI (recommended)**
+
+```bash
+npx create-convex-shipfast my-app
+```
+
+Docs live in [`docs/`](docs/) (run with `bun --cwd docs dev`). The marketing site lives in a separate repository.
+
+2. **Clone the repository**
 
 ```bash
 git clone <your-repo-url>
 cd convex-shipfast
 ```
 
-2. **Install dependencies**
+3. **Install dependencies**
 
 ```bash
 bun install
 ```
 
-3. **Set up environment variables**
+4. **Set up environment variables**
 
 ```bash
 cp .env.example .env.local
@@ -105,7 +113,7 @@ cp .env.example .env.local
 
 Edit `.env.local` and add your configuration values (see [Environment Variables](#environment-variables) section).
 
-4. **Set up Convex**
+5. **Set up Convex**
 
 ```bash
 bunx convex dev
@@ -116,7 +124,7 @@ This will:
 - Set up your `NEXT_PUBLIC_CONVEX_URL` automatically
 - Start the Convex development server
 
-5. **Start the development server**
+6. **Start the development server**
 
 In a new terminal:
 
@@ -124,7 +132,7 @@ In a new terminal:
 bun dev
 ```
 
-6. **Open your browser**
+7. **Open your browser**
 
 Navigate to [http://localhost:3000](http://localhost:3000)
 
