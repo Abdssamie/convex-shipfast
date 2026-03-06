@@ -1,8 +1,10 @@
 import {
   type EmailFlow,
   getBrevoTemplateId,
+  getEmailProvider,
 } from "./config";
 import { sendBrevoTemplate } from "./brevo";
+import { sendResendEmail } from "./resend";
 
 export type EmailRequest = {
   flow: EmailFlow;
@@ -15,6 +17,12 @@ export type EmailRequest = {
 export const sendEmail = async (
   request: EmailRequest,
 ) => {
+  const provider = getEmailProvider();
+
+  if (provider === "resend") {
+    return sendResendEmail(request);
+  }
+
   const templateId = getBrevoTemplateId(request.flow);
 
   return await sendBrevoTemplate({

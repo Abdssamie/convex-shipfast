@@ -21,7 +21,7 @@ const internalSendEmail = async (
   });
 
   if (!result.ok) {
-    logger.warn("brevo_email_failed", result.error);
+    logger.warn("email_send_failed", result.error);
     return result;
   }
 
@@ -88,7 +88,7 @@ export const sendInvitationEmail = async (params: {
     params: {
       inviteUrl: params.inviteLink,
       inviterName: params.invitedByName ?? "",
-      appName: "FastShip",
+      appName: "FluxKit",
     },
     tags: ["better-auth", "invitation"],
   });
@@ -101,7 +101,7 @@ export const sendWelcomeEmail = async (params: {
   return internalSendEmail("welcome", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
-      appName: "FastShip",
+      appName: "FluxKit",
       userName: params.name ?? "",
     },
     tags: ["better-auth", "welcome"],

@@ -83,8 +83,8 @@ describe("Brevo Sender", () => {
 
         expect(result.ok).toBe(false);
         if (!result.ok) {
-            if (result.error.code !== "brevo_request_failed") {
-                throw new Error("Expected brevo_request_failed error");
+            if (result.error.code !== "email_send_failed") {
+                throw new Error("Expected email_send_failed error");
             }
             expect(result.error.status).toBe(400);
             expect(result.error.reason).toBe("Invalid email");

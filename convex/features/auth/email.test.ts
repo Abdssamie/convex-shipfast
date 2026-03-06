@@ -74,7 +74,7 @@ describe("Auth Email Handlers", () => {
             params: {
                 inviteUrl: "http://invite",
                 inviterName: "",
-                appName: "FastShip"
+                appName: "FluxKit"
             },
             tags: ["better-auth", "invitation"],
         });
@@ -87,7 +87,7 @@ describe("Auth Email Handlers", () => {
         expect(sendEmailSpy).toHaveBeenCalledWith({
             flow: "welcome",
             to: { email: "test@test.com", name: "Test User" },
-            params: { appName: "FastShip", userName: "Test User" },
+            params: { appName: "FluxKit", userName: "Test User" },
             tags: ["better-auth", "welcome"],
         });
     });
@@ -99,6 +99,6 @@ describe("Auth Email Handlers", () => {
 
         expect(sendEmailSpy).toHaveBeenCalledTimes(1);
         expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
-        expect(loggerWarnSpy).toHaveBeenCalledWith("brevo_email_failed", { code: "brevo_request_failed", flow: "welcome" });
+        expect(loggerWarnSpy).toHaveBeenCalledWith("email_send_failed", { code: "brevo_request_failed", flow: "welcome" });
     });
 });

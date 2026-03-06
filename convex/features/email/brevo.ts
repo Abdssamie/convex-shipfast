@@ -116,7 +116,7 @@ export const sendBrevoTemplate = async (params: {
   };
 
   const errorBody = (status?: number, reason?: string): EmailSendError => ({
-    code: "brevo_request_failed",
+    code: "email_send_failed",
     flow: params.flow,
     status,
     reason,

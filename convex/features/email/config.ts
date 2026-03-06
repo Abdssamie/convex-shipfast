@@ -12,10 +12,10 @@ export type EmailConfigError =
 export type EmailSendError =
   | (EmailConfigError & { flow: EmailFlow })
   | {
-    code: "brevo_request_failed";
+    code: "email_send_failed";
     flow: EmailFlow;
-    status?: number;
     reason?: string;
+    status?: number;
     templateId?: number;
   };
 
@@ -23,6 +23,11 @@ export type BrevoConfig = {
   apiKey: string;
   sender: { name: string; email: string };
   replyTo?: { name?: string; email: string };
+};
+
+export type ResendConfig = {
+  apiKey: string;
+  from: string;
 };
 
 const requiredEnv = (field: string): string => {
@@ -55,6 +60,18 @@ export const getBrevoConfig = (): BrevoConfig => {
     },
     replyTo,
   };
+};
+
+export const getResendConfig = (): ResendConfig => {
+  const apiKey = requiredEnv("RESEND_API_KEY");
+  const from = requiredEnv("RESEND_FROM");
+  return { apiKey, from };
+};
+
+export const getEmailProvider = (): "brevo" | "resend" => {
+  const provider = process.env.EMAIL_PROVIDER;
+  if (provider === "brevo") return "brevo";
+  return "resend";
 };
 
 const templateEnvByFlow: Record<EmailFlow, string> = {
