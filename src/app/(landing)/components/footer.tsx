@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import Link from "next/link"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -110,10 +111,10 @@ export function LandingFooter() {
           {/* Brand Column */}
           <div className="col-span-4 lg:col-span-2 max-w-2xl">
             <div className="flex items-center space-x-2 mb-4 max-lg:justify-center">
-              <a href="/" className="flex items-center space-x-2 cursor-pointer">
+              <Link href="/" className="flex items-center space-x-2 cursor-pointer">
                 <Logo size={32} />
                 <span className="font-bold text-xl">{siteConfig.name}</span>
-              </a>
+              </Link>
             </div>
             <p className="text-muted-foreground mb-6 max-lg:text-center max-lg:flex max-lg:justify-center">
               {siteConfig.tagline}.
@@ -209,9 +210,9 @@ export function LandingFooter() {
               <span>Made with</span>
               <Heart className="h-4 w-4 text-red-500 fill-current" />
               <span>by</span>
-              <a href="/" className="font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
+              <Link href="/" className="font-semibold text-foreground hover:text-primary transition-colors cursor-pointer">
                 {siteConfig.name}
-              </a>
+              </Link>
             </div>
             <span className="hidden sm:inline">•</span>
             <span>© {new Date().getFullYear()} for the developer community</span>

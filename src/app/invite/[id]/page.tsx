@@ -56,7 +56,7 @@ function InviteContent({ id }: { id: string }) {
                     </CardContent>
                     <CardFooter className="flex flex-col gap-2">
                         <Button onClick={() => router.refresh()} variant="default" className="w-full">
-                            I've verified my email
+                            I&apos;ve verified my email
                         </Button>
                         <Button variant="outline" className="w-full" onClick={() => router.push("/dashboard")}>
                             Go to Dashboard
@@ -71,7 +71,7 @@ function InviteContent({ id }: { id: string }) {
         <div className="flex h-screen w-full items-center justify-center bg-muted/30 p-4">
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold">You've been invited!</CardTitle>
+                    <CardTitle className="text-2xl font-bold">You&apos;ve been invited!</CardTitle>
                     <CardDescription>Join the organization by accepting this invitation.</CardDescription>
                 </CardHeader>
                 <CardContent>

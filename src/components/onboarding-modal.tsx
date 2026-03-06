@@ -108,7 +108,7 @@ export function OnboardingModal({ open, onOpenChange }: { open: boolean, onOpenC
               <div>
                 <CardTitle>Welcome to {siteConfig.name}</CardTitle>
                 <CardDescription>
-                  Let's get you set up in just a few steps
+                  Let&apos;s get you set up in just a few steps
                 </CardDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={handleSkip}>
@@ -225,9 +225,9 @@ export function OnboardingModal({ open, onOpenChange }: { open: boolean, onOpenC
                   <div className="mx-auto bg-primary/10 text-primary flex size-16 items-center justify-center rounded-full">
                     <Check className="size-8" />
                   </div>
-                  <h3 className="text-lg font-semibold">You're all set!</h3>
+                  <h3 className="text-lg font-semibold">You&apos;re all set!</h3>
                   <p className="text-muted-foreground text-sm">
-                    Here's a quick overview of what you can do
+                    Here&apos;s a quick overview of what you can do
                   </p>
                 </div>
 
