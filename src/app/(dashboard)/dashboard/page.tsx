@@ -3,14 +3,19 @@
 import { ChartAreaInteractive } from "./components/chart-area-interactive"
 import { DataTable } from "./components/data-table"
 import { SectionCards } from "./components/section-cards"
-import { useQuery } from "convex/react"
-import { api } from "@/convex/_generated/api"
+
+const placeholderStats = {
+  totalTasks: 42,
+  completedTasks: 28,
+  inProgressTasks: 8,
+  pendingTasks: 6,
+  completionRate: "66.7",
+  highPriorityTasks: 3,
+  upcomingEvents: 5,
+  totalEvents: 12,
+}
 
 export default function Page() {
-  const stats = useQuery(api.analytics.getDashboardStats)
-
-  const isLoading = stats === undefined
-
   return (
     <>
       {/* Page Title and Description */}
@@ -22,7 +27,7 @@ export default function Page() {
       </div>
 
       <div className="@container/main px-4 lg:px-6 space-y-6">
-        <SectionCards stats={stats} isLoading={isLoading} />
+        <SectionCards stats={placeholderStats} isLoading={false} />
         <ChartAreaInteractive />
       </div>
       <div className="@container/main">

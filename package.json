@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "bunx convex codegen && tsc --noEmit",
     "test": "TZ=UTC bun test"
   },
   "dependencies": {
