@@ -24,22 +24,30 @@ import {
 import { authClient } from "@/lib/auth/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useState, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 
 const loginFormSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
 
 type LoginFormValues = z.infer<typeof loginFormSchema>
 
-export function LoginForm1({
+export function LoginForm1Content({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const rawCallbackUrl = searchParams.get("callbackUrl")
+  const callbackUrl = rawCallbackUrl || "/dashboard"
+  const signUpUrl = rawCallbackUrl
+    ? `/sign-up?callbackUrl=${encodeURIComponent(rawCallbackUrl)}`
+    : "/sign-up"
+
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -55,12 +63,12 @@ export function LoginForm1({
         email: data.email,
         password: data.password,
       })
-      
+
       if (result.error) {
         toast.error(result.error.message || "Failed to sign in")
       } else {
         toast.success("Successfully signed in!")
-        router.push("/dashboard")
+        router.push(callbackUrl)
       }
     } catch (error) {
       toast.error("An unexpected error occurred")
@@ -73,7 +81,7 @@ export function LoginForm1({
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: callbackUrl,
       })
     } catch (error) {
       toast.error("Failed to sign in with Google")
@@ -137,9 +145,9 @@ export function LoginForm1({
                     {isLoading ? "Signing in..." : "Login"}
                   </Button>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full cursor-pointer" 
+                  <Button
+                    variant="outline"
+                    className="w-full cursor-pointer"
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={isLoading}
@@ -155,7 +163,7 @@ export function LoginForm1({
                 </div>
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <a href="/auth/sign-up" className="underline underline-offset-4">
+                  <a href={signUpUrl} className="underline underline-offset-4">
                     Sign up
                   </a>
                 </div>
@@ -169,5 +177,13 @@ export function LoginForm1({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
+  )
+}
+
+export function LoginForm1(props: React.ComponentProps<"div">) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm1Content {...props} />
+    </Suspense>
   )
 }

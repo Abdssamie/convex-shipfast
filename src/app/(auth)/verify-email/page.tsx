@@ -19,7 +19,7 @@ export default function VerifyEmailPage() {
   useEffect(() => {
     const verifyEmail = async () => {
       const token = searchParams.get("token")
-      
+
       if (!token) {
         setState("error")
         setErrorMessage("Verification token is missing")
@@ -45,7 +45,13 @@ export default function VerifyEmailPage() {
 
         setState("success")
         setTimeout(() => {
-          router.push("/dashboard")
+          const callbackUrl = sessionStorage.getItem("auth-callback-url")
+          if (callbackUrl) {
+            sessionStorage.removeItem("auth-callback-url")
+            router.push(callbackUrl)
+          } else {
+            router.push("/dashboard")
+          }
         }, 2000)
       } catch (error) {
         setState("error")

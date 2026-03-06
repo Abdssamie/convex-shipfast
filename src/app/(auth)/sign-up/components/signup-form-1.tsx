@@ -25,7 +25,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { authClient } from "@/lib/auth/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useState, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 
 const signupFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -41,13 +42,20 @@ const signupFormSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupFormSchema>
 
-export function SignupForm1({
+export function SignupForm1Content({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const rawCallbackUrl = searchParams.get("callbackUrl")
+  const callbackUrl = rawCallbackUrl || "/dashboard"
+  const signInUrl = rawCallbackUrl
+    ? `/sign-in?callbackUrl=${encodeURIComponent(rawCallbackUrl)}`
+    : "/sign-in"
+
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -75,6 +83,9 @@ export function SignupForm1({
       }
 
       sessionStorage.setItem("verification-email", data.email)
+      if (searchParams.get("callbackUrl")) {
+        sessionStorage.setItem("auth-callback-url", searchParams.get("callbackUrl") as string)
+      }
       toast.success("Account created! Check your email to verify.")
       router.push("/verify-email-sent")
     } catch (error) {
@@ -89,7 +100,7 @@ export function SignupForm1({
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: callbackUrl,
       })
     } catch (error) {
       toast.error("Failed to sign up with Google")
@@ -204,9 +215,9 @@ export function SignupForm1({
                     {isLoading ? "Creating account..." : "Create Account"}
                   </Button>
 
-                  <Button 
-                    variant="outline" 
-                    className="w-full cursor-pointer" 
+                  <Button
+                    variant="outline"
+                    className="w-full cursor-pointer"
                     type="button"
                     onClick={handleGoogleSignup}
                     disabled={isLoading}
@@ -222,7 +233,7 @@ export function SignupForm1({
                 </div>
                 <div className="text-center text-sm">
                   Already have an account?{" "}
-                  <a href="/sign-in" className="underline underline-offset-4">
+                  <a href={signInUrl} className="underline underline-offset-4">
                     Sign in
                   </a>
                 </div>
@@ -236,5 +247,13 @@ export function SignupForm1({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
+  )
+}
+
+export function SignupForm1(props: React.ComponentProps<"div">) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupForm1Content {...props} />
+    </Suspense>
   )
 }

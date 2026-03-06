@@ -115,6 +115,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         },
       }),
       organization({
+        requireEmailVerificationOnInvitation: true,
         async sendInvitationEmail(data) {
           const siteUrl =
             process.env.SITE_URL ??
