@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 import { authComponent, createAuth } from "./features/auth/auth";
 import { polar } from "./polar";
-import { checkRateLimit, authLimiter } from "./rateLimit";
+import { checkRateLimit, authLimiter } from "./features/rateLimit";
 
 const http = httpRouter();
 
@@ -16,11 +16,11 @@ const RATE_LIMITED_PATHS = [
 // Create a wrapper for the http router to add rate limiting
 const createRateLimitedRouter = () => {
   const originalRoute = http.route.bind(http);
-  
+
   // Override the route method to add rate limiting middleware
   (http as any).route = function (options: any) {
     const originalHandler = options.handler;
-    
+
     // Check if this is a rate-limited auth endpoint
     const isRateLimited = RATE_LIMITED_PATHS.some((path) =>
       options.path?.includes(path)
@@ -42,7 +42,7 @@ const createRateLimitedRouter = () => {
             JSON.stringify({
               error: "Too many requests",
               message: "You have exceeded the rate limit. Please try again later.",
-              retryAfter: rateLimitResult.reset 
+              retryAfter: rateLimitResult.reset
                 ? Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
                 : 900,
             }),
@@ -70,7 +70,7 @@ const createRateLimitedRouter = () => {
 
     return originalRoute.call(this, options);
   };
-  
+
   return http;
 };
 
