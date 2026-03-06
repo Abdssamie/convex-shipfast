@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { UserPlus, UserMinus, LogOut, Trash2 } from "lucide-react"
+import { UserPlus, UserMinus, LogOut, RefreshCw, X } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -27,9 +27,14 @@ export default function OrganizationSettingsPage() {
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null)
+  const [resendingId, setResendingId] = useState<string | null>(null)
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
 
   const currentOrg = useQuery(api.features.organization.organization.getCurrentOrganization)
+  const pendingInvitations = useQuery(api.features.organization.organization.listInvitations)
   const inviteMember = useAction(api.features.organization.actions.inviteMember)
+  const resendInvitation = useAction(api.features.organization.actions.resendInvitation)
+  const cancelInvitation = useAction(api.features.organization.actions.cancelInvitation)
   const removeMember = useMutation(api.features.organization.mutations.removeMember)
   const leaveOrganization = useMutation(api.features.organization.mutations.leaveOrganization)
 
@@ -47,11 +52,40 @@ export default function OrganizationSettingsPage() {
     })
     if (!result.ok) {
       toast.error(result.error)
+      // Keep dialog open so user can correct / retry
       return
     }
     toast.success("Invitation sent successfully")
     form.reset()
     setInviteDialogOpen(false)
+  }
+
+  const handleResendInvitation = async (email: string, invitationId: string) => {
+    setResendingId(invitationId)
+    try {
+      const result = await resendInvitation({ email })
+      if (!result.ok) {
+        toast.error(result.error)
+        return
+      }
+      toast.success(`Invitation resent to ${email}`)
+    } finally {
+      setResendingId(null)
+    }
+  }
+
+  const handleCancelInvitation = async (invitationId: string) => {
+    setCancellingId(invitationId)
+    try {
+      const result = await cancelInvitation({ invitationId })
+      if (!result.ok) {
+        toast.error(result.error)
+        return
+      }
+      toast.success("Invitation cancelled")
+    } finally {
+      setCancellingId(null)
+    }
   }
 
   const handleRemoveMember = async (memberEmail: string) => {
@@ -97,6 +131,7 @@ export default function OrganizationSettingsPage() {
 
   const members = currentOrg.members || []
   const isOwner = members.some(m => m.role === "owner")
+  const pending = pendingInvitations ?? []
 
   return (
     <div className="px-4 lg:px-6 space-y-6">
@@ -232,6 +267,69 @@ export default function OrganizationSettingsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Pending Invitations */}
+      {isOwner && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pending Invitations</CardTitle>
+            <CardDescription>Invitations that have been sent but not yet accepted</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {pendingInvitations === undefined ? (
+              <p className="text-sm text-muted-foreground">Loading invitations...</p>
+            ) : pending.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No pending invitations</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Expires</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pending.map((inv) => (
+                    <TableRow key={inv.id}>
+                      <TableCell className="font-medium">{inv.email}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{inv.role}</Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {inv.expiresAt
+                          ? new Date(inv.expiresAt).toLocaleDateString()
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="text-right space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={resendingId === inv.id}
+                          onClick={() => handleResendInvitation(inv.email, inv.id)}
+                          title="Resend invitation"
+                        >
+                          <RefreshCw className={`h-4 w-4 ${resendingId === inv.id ? "animate-spin" : ""}`} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={cancellingId === inv.id}
+                          onClick={() => handleCancelInvitation(inv.id)}
+                          title="Cancel invitation"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Danger Zone */}
       <Card className="border-destructive">

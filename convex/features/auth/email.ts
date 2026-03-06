@@ -1,6 +1,7 @@
-import type { EmailFlow } from "../email/config";
+import type { EmailFlow, EmailSendError } from "../email/config";
 import { sendEmail } from "../email";
 import { logger } from "../../lib/logger";
+import { type Result, ok, err } from "../shared/result";
 
 type BetterAuthEmailPayload = {
   to: { email: string; name?: string };
@@ -8,7 +9,10 @@ type BetterAuthEmailPayload = {
   tags?: string[];
 };
 
-const internalSendEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayload) => {
+const internalSendEmail = async (
+  flow: EmailFlow,
+  payload: BetterAuthEmailPayload,
+): Promise<Result<void, EmailSendError>> => {
   const result = await sendEmail({
     flow,
     to: payload.to,
@@ -18,7 +22,10 @@ const internalSendEmail = async (flow: EmailFlow, payload: BetterAuthEmailPayloa
 
   if (!result.ok) {
     logger.warn("brevo_email_failed", result.error);
+    return result;
   }
+
+  return ok(undefined);
 };
 
 
@@ -27,8 +34,8 @@ export const sendVerificationEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
-}) => {
-  await internalSendEmail("email_verification", {
+}): Promise<Result<void, EmailSendError>> => {
+  return internalSendEmail("email_verification", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       verificationUrl: params.url,
@@ -43,8 +50,8 @@ export const sendPasswordResetEmail = async (params: {
   email: string;
   name?: string | null;
   url: string;
-}) => {
-  await internalSendEmail("password_reset", {
+}): Promise<Result<void, EmailSendError>> => {
+  return internalSendEmail("password_reset", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       resetUrl: params.url,
@@ -58,8 +65,8 @@ export const sendPasswordResetEmail = async (params: {
 export const sendMagicLinkEmail = async (params: {
   email: string;
   url: string;
-}) => {
-  await internalSendEmail("magic_link", {
+}): Promise<Result<void, EmailSendError>> => {
+  return internalSendEmail("magic_link", {
     to: { email: params.email },
     params: {
       magicLink: params.url,
@@ -75,8 +82,8 @@ export const sendInvitationEmail = async (params: {
   invitedByName?: string | null;
   organizationName?: string | null;
   inviteLink: string;
-}) => {
-  await internalSendEmail("invitation", {
+}): Promise<Result<void, EmailSendError>> => {
+  return internalSendEmail("invitation", {
     to: { email: params.email },
     params: {
       inviteUrl: params.inviteLink,
@@ -90,8 +97,8 @@ export const sendInvitationEmail = async (params: {
 export const sendWelcomeEmail = async (params: {
   email: string;
   name?: string | null;
-}) => {
-  await internalSendEmail("welcome", {
+}): Promise<Result<void, EmailSendError>> => {
+  return internalSendEmail("welcome", {
     to: { email: params.email, name: params.name ?? undefined },
     params: {
       appName: "FastShip",

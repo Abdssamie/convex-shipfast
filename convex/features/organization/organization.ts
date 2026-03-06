@@ -13,7 +13,7 @@ export const getCurrentOrganization = query({
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
     const org = await auth.api.getFullOrganization({ headers }).catch(() => null);
-    
+
     if (!org) return null;
 
     return {
@@ -80,3 +80,29 @@ export const listUserOrganizations = query({
     }));
   },
 });
+
+/**
+ * Returns all pending invitations for the current user's active organization.
+ */
+export const listInvitations = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
+    const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+    const invitations = await auth.api.listInvitations({ headers }).catch(() => []);
+
+    if (!invitations) return [];
+
+    return invitations.map((inv) => ({
+      id: inv.id,
+      email: inv.email,
+      role: inv.role,
+      status: inv.status,
+      expiresAt: inv.expiresAt?.getTime(),
+      createdAt: inv.createdAt?.getTime(),
+    }));
+  },
+});
+

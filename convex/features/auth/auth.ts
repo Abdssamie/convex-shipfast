@@ -121,13 +121,20 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             process.env.NEXT_PUBLIC_SITE_URL ??
             "http://localhost:3000";
           const inviteLink = `${siteUrl}/invite/${data.id}`;
-          await authEmailHandlers.sendInvitationEmail({
+          // Must throw on failure so better-auth surfaces the error back to createInvitation
+          const result = await authEmailHandlers.sendInvitationEmail({
             email: data.email,
             invitedByEmail: data.inviter?.user?.email ?? null,
             invitedByName: data.inviter?.user?.name ?? null,
             organizationName: data.organization?.name ?? null,
             inviteLink,
           });
+          if (!result.ok) {
+            throw new Error(
+              `Failed to send invitation email: ${"reason" in result.error ? result.error.reason : result.error.code
+              }`,
+            );
+          }
         },
       }),
     ],
