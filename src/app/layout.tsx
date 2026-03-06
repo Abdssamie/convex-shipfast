@@ -7,6 +7,7 @@ import { inter } from "@/lib/fonts";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
 import { getToken } from "@/lib/auth/server";
 import { RootErrorBoundary } from "@/components/root-error-boundary";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Shadcn Dashboard",
@@ -36,6 +37,7 @@ export default async function RootLayout({
               </RootErrorBoundary>
             </SidebarConfigProvider>
           </ThemeProvider>
+          <Toaster />
         </ConvexClientProvider>
       </body>
     </html>

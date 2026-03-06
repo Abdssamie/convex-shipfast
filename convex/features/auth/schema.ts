@@ -107,7 +107,8 @@ export const tables = {
     .index("email", ["email"])
     .index("role", ["role"])
     .index("status", ["status"])
-    .index("inviterId", ["inviterId"]),
+    .index("inviterId", ["inviterId"])
+    .index("email_organizationId_status", ["email", "organizationId", "status"]),
 };
 
 const schema = defineSchema(tables);

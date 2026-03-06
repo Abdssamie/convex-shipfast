@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useQuery, useMutation } from "convex/react"
+import { useQuery, useMutation, useAction } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 const inviteSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
 })
 
 type InviteFormValues = z.infer<typeof inviteSchema>
@@ -29,7 +29,7 @@ export default function OrganizationSettingsPage() {
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null)
 
   const currentOrg = useQuery(api.features.organization.organization.getCurrentOrganization)
-  const inviteMember = useMutation(api.features.organization.mutations.inviteMember)
+  const inviteMember = useAction(api.features.organization.actions.inviteMember)
   const removeMember = useMutation(api.features.organization.mutations.removeMember)
   const leaveOrganization = useMutation(api.features.organization.mutations.leaveOrganization)
 
@@ -41,37 +41,37 @@ export default function OrganizationSettingsPage() {
   })
 
   const handleInviteMember = async (data: InviteFormValues) => {
-    try {
-      await inviteMember({
-        email: data.email.trim().toLowerCase(),
-        role: "member",
-      })
-      toast.success("Invitation sent successfully")
-      form.reset()
-      setInviteDialogOpen(false)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to send invitation")
+    const result = await inviteMember({
+      email: data.email.trim().toLowerCase(),
+      role: "member",
+    })
+    if (!result.ok) {
+      toast.error(result.error)
+      return
     }
+    toast.success("Invitation sent successfully")
+    form.reset()
+    setInviteDialogOpen(false)
   }
 
   const handleRemoveMember = async (memberEmail: string) => {
-    try {
-      await removeMember({ memberIdOrEmail: memberEmail })
-      toast.success("Member removed successfully")
-      setRemoveMemberId(null)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to remove member")
+    const result = await removeMember({ memberIdOrEmail: memberEmail })
+    if (!result.ok) {
+      toast.error(result.error)
+      return
     }
+    toast.success("Member removed successfully")
+    setRemoveMemberId(null)
   }
 
   const handleLeaveOrganization = async () => {
-    try {
-      await leaveOrganization({})
-      toast.success("You have left the organization")
-      setLeaveDialogOpen(false)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to leave organization")
+    const result = await leaveOrganization({})
+    if (!result.ok) {
+      toast.error(result.error)
+      return
     }
+    toast.success("You have left the organization")
+    setLeaveDialogOpen(false)
   }
 
   if (currentOrg === undefined) {

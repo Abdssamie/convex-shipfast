@@ -2,6 +2,17 @@ import { mutation } from "../../_generated/server";
 import { v } from "convex/values";
 import { authComponent, createAuth } from "../auth/auth";
 
+type OrgData = {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string | null | undefined;
+  metadata: string | null | undefined;
+  createdAt: number | undefined;
+};
+
+type MutationResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
 /**
  * Create a new organization
  */
@@ -11,74 +22,39 @@ export const createOrganization = mutation({
     slug: v.optional(v.string()),
     description: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<MutationResult<OrgData>> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+    if (!identity) return { ok: false, error: "Not authenticated" };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    const organization = await auth.api.createOrganization({
-      body: {
-        name: args.name,
-        slug: args.slug || args.name.toLowerCase().replace(/\s+/g, "-"),
-        metadata: args.description ? { description: args.description } : undefined,
-      },
-      headers,
-    });
 
-    if (!organization) {
-      throw new Error("Failed to create organization");
+    try {
+      const organization = await auth.api.createOrganization({
+        body: {
+          name: args.name,
+          slug: args.slug || args.name.toLowerCase().replace(/\s+/g, "-"),
+          metadata: args.description ? { description: args.description } : undefined,
+        },
+        headers,
+      });
+
+      if (!organization) return { ok: false, error: "Failed to create organization" };
+
+      return {
+        ok: true,
+        data: {
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          logo: organization.logo,
+          metadata: organization.metadata,
+          createdAt: organization.createdAt?.getTime(),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ok: false, error: message };
     }
-
-    return {
-      id: organization.id,
-      name: organization.name,
-      slug: organization.slug,
-      logo: organization.logo,
-      metadata: organization.metadata,
-      createdAt: organization.createdAt?.getTime(),
-    };
-  },
-});
-
-/**
- * Invite a member to the organization
- */
-export const inviteMember = mutation({
-  args: {
-    email: v.string(),
-    role: v.optional(v.union(v.literal("owner"), v.literal("admin"), v.literal("member"))),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
-    const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    const invitation = await auth.api.createInvitation({
-      body: {
-        email: args.email,
-        role: args.role || "member",
-      },
-      headers,
-    });
-
-    if (!invitation) {
-      throw new Error("Failed to create invitation");
-    }
-
-    return {
-      id: invitation.id,
-      email: invitation.email,
-      role: invitation.role,
-      status: invitation.status,
-      expiresAt: invitation.expiresAt?.getTime(),
-      createdAt: invitation.createdAt?.getTime(),
-    };
   },
 });
 
@@ -89,22 +65,22 @@ export const removeMember = mutation({
   args: {
     memberIdOrEmail: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<MutationResult<{ success: boolean }>> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+    if (!identity) return { ok: false, error: "Not authenticated" };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    await auth.api.removeMember({
-      body: {
-        memberIdOrEmail: args.memberIdOrEmail,
-      },
-      headers,
-    });
 
-    return { success: true };
+    try {
+      await auth.api.removeMember({
+        body: { memberIdOrEmail: args.memberIdOrEmail },
+        headers,
+      });
+      return { ok: true, data: { success: true } };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ok: false, error: message };
+    }
   },
 });
 
@@ -115,32 +91,29 @@ export const leaveOrganization = mutation({
   args: {
     organizationId: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<MutationResult<{ success: boolean }>> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+    if (!identity) return { ok: false, error: "Not authenticated" };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    // Get current organization if not provided
-    let orgId = args.organizationId;
-    if (!orgId) {
-      const currentOrg = await auth.api.getFullOrganization({ headers }).catch(() => null);
-      if (!currentOrg) {
-        throw new Error("No active organization");
-      }
-      orgId = currentOrg.id;
-    }
-    
-    await auth.api.leaveOrganization({
-      body: {
-        organizationId: orgId,
-      },
-      headers,
-    });
 
-    return { success: true };
+    try {
+      let orgId = args.organizationId;
+      if (!orgId) {
+        const currentOrg = await auth.api.getFullOrganization({ headers }).catch(() => null);
+        if (!currentOrg) return { ok: false, error: "No active organization" };
+        orgId = currentOrg.id;
+      }
+
+      await auth.api.leaveOrganization({
+        body: { organizationId: orgId },
+        headers,
+      });
+      return { ok: true, data: { success: true } };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ok: false, error: message };
+    }
   },
 });
 
@@ -154,38 +127,42 @@ export const updateOrganization = mutation({
     description: v.optional(v.string()),
     organizationId: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<MutationResult<OrgData>> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+    if (!identity) return { ok: false, error: "Not authenticated" };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    const organization = await auth.api.updateOrganization({
-      body: {
-        data: {
-          name: args.name,
-          slug: args.slug,
-          metadata: args.description ? { description: args.description } : undefined,
+
+    try {
+      const organization = await auth.api.updateOrganization({
+        body: {
+          data: {
+            name: args.name,
+            slug: args.slug,
+            metadata: args.description ? { description: args.description } : undefined,
+          },
+          organizationId: args.organizationId,
         },
-        organizationId: args.organizationId,
-      },
-      headers,
-    });
+        headers,
+      });
 
-    if (!organization) {
-      throw new Error("Failed to update organization");
+      if (!organization) return { ok: false, error: "Failed to update organization" };
+
+      return {
+        ok: true,
+        data: {
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          logo: organization.logo,
+          metadata: organization.metadata,
+          createdAt: organization.createdAt?.getTime(),
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ok: false, error: message };
     }
-
-    return {
-      id: organization.id,
-      name: organization.name,
-      slug: organization.slug,
-      logo: organization.logo,
-      metadata: organization.metadata,
-      createdAt: organization.createdAt?.getTime(),
-    };
   },
 });
 
@@ -196,21 +173,21 @@ export const setActiveOrganization = mutation({
   args: {
     organizationId: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<MutationResult<{ success: boolean }>> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+    if (!identity) return { ok: false, error: "Not authenticated" };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    
-    await auth.api.setActiveOrganization({
-      body: {
-        organizationId: args.organizationId,
-      },
-      headers,
-    });
 
-    return { success: true };
+    try {
+      await auth.api.setActiveOrganization({
+        body: { organizationId: args.organizationId },
+        headers,
+      });
+      return { ok: true, data: { success: true } };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { ok: false, error: message };
+    }
   },
 });
