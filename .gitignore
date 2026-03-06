@@ -7,3 +7,6 @@ docs/node_modules/
 node_modules/
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+**/_generated
+convex/_generated
