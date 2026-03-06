@@ -55,7 +55,9 @@ export default function OrganizationSettingsPage() {
       // Keep dialog open so user can correct / retry
       return
     }
-    toast.success("Invitation sent successfully")
+    toast.success("Invitation sent", {
+      description: "If they don't see it, ask them to check their spam folder.",
+    })
     form.reset()
     setInviteDialogOpen(false)
   }
@@ -63,12 +65,14 @@ export default function OrganizationSettingsPage() {
   const handleResendInvitation = async (email: string, invitationId: string) => {
     setResendingId(invitationId)
     try {
-      const result = await resendInvitation({ email })
+      const result = await resendInvitation({ email, invitationId })
       if (!result.ok) {
         toast.error(result.error)
         return
       }
-      toast.success(`Invitation resent to ${email}`)
+      toast.success("Invitation resent", {
+        description: `Sent to ${email}. Ask them to check their spam folder.`,
+      })
     } finally {
       setResendingId(null)
     }

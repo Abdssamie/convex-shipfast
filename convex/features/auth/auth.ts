@@ -121,7 +121,13 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             process.env.NEXT_PUBLIC_SITE_URL ??
             "http://localhost:3000";
           const inviteLink = `${siteUrl}/invite/${data.id}`;
-          // Must throw on failure so better-auth surfaces the error back to createInvitation
+
+          console.log("[invite:callback] fired", {
+            invitationId: data.id,
+            email: data.email,
+            inviteLink,
+          });
+
           const result = await authEmailHandlers.sendInvitationEmail({
             email: data.email,
             invitedByEmail: data.inviter?.user?.email ?? null,
@@ -129,12 +135,16 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             organizationName: data.organization?.name ?? null,
             inviteLink,
           });
+
+          console.log("[invite:callback] email result", JSON.stringify(result));
+
           if (!result.ok) {
-            throw new Error(
-              `Failed to send invitation email: ${"reason" in result.error ? result.error.reason : result.error.code
-              }`,
-            );
+            const reason = "reason" in result.error ? result.error.reason : result.error.code;
+            console.log("[invite:callback] throwing error:", reason);
+            throw new Error(`sendInvitationEmail failed: ${reason}`);
           }
+
+          console.log("[invite:callback] email sent successfully");
         },
       }),
     ],

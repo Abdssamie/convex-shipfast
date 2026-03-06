@@ -50,8 +50,8 @@ export const inviteMember = action({
             if (message.toLowerCase().includes("already invited")) {
                 return { ok: false, error: `${args.email} has already been invited to this organization` };
             }
-            if (message.toLowerCase().includes("failed to send invitation email")) {
-                return { ok: false, error: "Invitation created but the email could not be delivered. Please try again or check your email configuration." };
+            if (message.toLowerCase().includes("sendinvitationemail failed")) {
+                return { ok: false, error: "Invitation created but the email could not be delivered. Please check your email configuration." };
             }
             return { ok: false, error: "Failed to send invitation" };
         }
@@ -60,11 +60,12 @@ export const inviteMember = action({
 
 /**
  * Resend an invitation email to a previously invited member.
- * Uses better-auth's native resend:true flag — no cancel+create needed.
+ * Uses better-auth's native resend:true flag.
  */
 export const resendInvitation = action({
     args: {
         email: v.string(),
+        invitationId: v.string(),
         role: v.optional(v.union(v.literal("owner"), v.literal("admin"), v.literal("member"))),
     },
     handler: async (ctx, args): Promise<{ ok: true } | { ok: false; error: string }> => {
@@ -76,7 +77,7 @@ export const resendInvitation = action({
         const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
 
         try {
-            await auth.api.createInvitation({
+            const invitation = await auth.api.createInvitation({
                 body: {
                     email: args.email,
                     role: args.role ?? "member",
@@ -84,13 +85,14 @@ export const resendInvitation = action({
                 },
                 headers,
             });
+
             return { ok: true };
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
-            if (message.toLowerCase().includes("failed to send invitation email")) {
-                return { ok: false, error: "Could not resend invitation email. Please check your email configuration." };
+            if (message.toLowerCase().includes("sendinvitationemail failed")) {
+                return { ok: false, error: "Could not send invitation email. Please check your email configuration." };
             }
-            return { ok: false, error: "Failed to resend invitation" };
+            return { ok: false, error: message || "Failed to resend invitation" };
         }
     },
 });
