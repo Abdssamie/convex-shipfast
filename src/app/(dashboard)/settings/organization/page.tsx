@@ -65,7 +65,7 @@ export default function OrganizationSettingsPage() {
   const handleResendInvitation = async (email: string, invitationId: string) => {
     setResendingId(invitationId)
     try {
-      const result = await resendInvitation({ email, invitationId })
+      const result = await resendInvitation({ email })
       if (!result.ok) {
         toast.error(result.error)
         return

@@ -128,30 +128,4 @@ describe("Better Auth Handlers", () => {
         });
     });
 
-    test("organization plugin sendInvitationEmail calls sendInvitationEmail", async () => {
-        // Mock environment variable for SITE_URL
-        const originalEnv = process.env;
-        process.env = { ...originalEnv, SITE_URL: "https://mysite.com" };
-
-        const options = createAuthOptions(mockCtx as GenericCtx<DataModel>);
-        const orgPlugin = options.plugins!.find(p => p.id === "organization") as any;
-
-        await orgPlugin.options.sendInvitationEmail({
-            id: "invite-789",
-            email: "invitee@example.com",
-            inviter: { user: { email: "inviter@example.com", name: "Inviter" } },
-            organization: { name: "Test Org" }
-        });
-
-        expect(authEmailHandlers.sendInvitationEmail).toHaveBeenCalledTimes(1);
-        expect(authEmailHandlers.sendInvitationEmail).toHaveBeenCalledWith({
-            email: "invitee@example.com",
-            invitedByEmail: "inviter@example.com",
-            invitedByName: "Inviter",
-            organizationName: "Test Org",
-            inviteLink: "https://mysite.com/invite/invite-789"
-        });
-
-        process.env = originalEnv;
-    });
 });

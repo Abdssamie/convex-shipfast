@@ -65,7 +65,6 @@ export const inviteMember = action({
 export const resendInvitation = action({
     args: {
         email: v.string(),
-        invitationId: v.string(),
         role: v.optional(v.union(v.literal("owner"), v.literal("admin"), v.literal("member"))),
     },
     handler: async (ctx, args): Promise<{ ok: true } | { ok: false; error: string }> => {
@@ -77,7 +76,7 @@ export const resendInvitation = action({
         const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
 
         try {
-            const invitation = await auth.api.createInvitation({
+            await auth.api.createInvitation({
                 body: {
                     email: args.email,
                     role: args.role ?? "member",

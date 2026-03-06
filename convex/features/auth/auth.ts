@@ -122,12 +122,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             "http://localhost:3000";
           const inviteLink = `${siteUrl}/invite/${data.id}`;
 
-          console.log("[invite:callback] fired", {
-            invitationId: data.id,
-            email: data.email,
-            inviteLink,
-          });
-
           const result = await authEmailHandlers.sendInvitationEmail({
             email: data.email,
             invitedByEmail: data.inviter?.user?.email ?? null,
@@ -136,15 +130,10 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
             inviteLink,
           });
 
-          console.log("[invite:callback] email result", JSON.stringify(result));
-
           if (!result.ok) {
             const reason = "reason" in result.error ? result.error.reason : result.error.code;
-            console.log("[invite:callback] throwing error:", reason);
             throw new Error(`sendInvitationEmail failed: ${reason}`);
           }
-
-          console.log("[invite:callback] email sent successfully");
         },
       }),
     ],

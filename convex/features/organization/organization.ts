@@ -95,14 +95,16 @@ export const listInvitations = query({
 
     if (!invitations) return [];
 
-    return invitations.map((inv) => ({
-      id: inv.id,
-      email: inv.email,
-      role: inv.role,
-      status: inv.status,
-      expiresAt: inv.expiresAt?.getTime(),
-      createdAt: inv.createdAt?.getTime(),
-    }));
+    return invitations
+      .filter((inv) => inv.status === "pending")
+      .map((inv) => ({
+        id: inv.id,
+        email: inv.email,
+        role: inv.role,
+        status: inv.status,
+        expiresAt: inv.expiresAt?.getTime(),
+        createdAt: inv.createdAt?.getTime(),
+      }));
   },
 });
 
