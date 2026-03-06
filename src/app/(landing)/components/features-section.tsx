@@ -1,15 +1,16 @@
 "use client"
 
 import {
-  BarChart3,
   Zap,
   Users,
   ArrowRight,
   Database,
-  Package,
-  Crown,
-  Layout,
-  Palette
+  ShieldCheck,
+  CreditCard,
+  Mail,
+  Activity,
+  Lock,
+  Code2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,47 +18,47 @@ import { Image3D } from '@/components/image-3d'
 
 const mainFeatures = [
   {
-    icon: Package,
-    title: 'Curated Component Library',
-    description: 'Hand-picked blocks and templates for quality and reliability.'
+    icon: ShieldCheck,
+    title: 'Better Auth',
+    description: 'Email + password, magic links, social OAuth, and password reset — fully configured.'
   },
   {
-    icon: Crown,
-    title: 'Free & Premium Options',
-    description: 'Start free, upgrade to premium collections when you need more.'
+    icon: Users,
+    title: 'Organizations & Teams',
+    description: 'Invite members, manage roles, and handle multi-tenant access out of the box.'
   },
   {
-    icon: Layout,
-    title: 'Ready-to-Use Templates',
-    description: 'Copy-paste components that just work out of the box.'
+    icon: Database,
+    title: 'Convex Backend',
+    description: 'Real-time serverless backend with reactive queries — no REST endpoints to write.'
   },
   {
     icon: Zap,
-    title: 'Regular Updates',
-    description: 'New blocks and templates added weekly to keep you current.'
+    title: 'Real-time by Default',
+    description: 'Data updates propagate instantly across all clients with zero polling or websockets setup.'
   }
 ]
 
 const secondaryFeatures = [
   {
-    icon: BarChart3,
-    title: 'Multiple Frameworks',
-    description: 'React, Next.js, and Vite compatibility for flexible development.'
+    icon: CreditCard,
+    title: 'Billing with Polar',
+    description: 'Subscription management, usage tracking, and checkout flows wired up and ready.'
   },
   {
-    icon: Palette,
-    title: 'Modern Tech Stack',
-    description: 'Built with shadcn/ui, Tailwind CSS, and TypeScript.'
+    icon: Mail,
+    title: 'Transactional Email',
+    description: 'Brevo integration for verification, magic links, invitations, and password resets.'
   },
   {
-    icon: Users,
-    title: 'Responsive Design',
-    description: 'Mobile-first components for all screen sizes and devices.'
+    icon: Activity,
+    title: 'Error Monitoring',
+    description: 'Sentry configured for both client-side and server-side error tracking.'
   },
   {
-    icon: Database,
-    title: 'Developer-Friendly',
-    description: 'Clean code, well-documented, easy integration and customization.'
+    icon: Lock,
+    title: 'Rate Limiting',
+    description: 'Upstash Redis integration to protect API routes from abuse.'
   }
 ]
 
@@ -67,12 +68,12 @@ export function FeaturesSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center mb-16">
-          <Badge variant="outline" className="mb-4">Marketplace Features</Badge>
+          <Badge variant="outline" className="mb-4">What&apos;s Included</Badge>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
-            Everything you need to build amazing web applications
+            Everything you need to ship production SaaS
           </h2>
           <p className="text-lg text-muted-foreground">
-            Our marketplace provides curated blocks, templates, landing pages, and admin dashboards to help you build professional applications faster than ever.
+            FluxKit wires up all the hard parts — authentication, billing, real-time data, email, and monitoring — so you can focus on building your product.
           </p>
         </div>
 
@@ -82,17 +83,17 @@ export function FeaturesSection() {
           <Image3D
             lightSrc="/feature-1-light.png"
             darkSrc="/feature-1-dark.png"
-            alt="Analytics dashboard"
+            alt="Authentication and organization management"
             direction="left"
           />
           {/* Right Content */}
           <div className="space-y-6">
             <div className="space-y-4">
               <h3 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-                Components that accelerate development
+                Auth & teams, fully configured
               </h3>
               <p className="text-muted-foreground text-base text-pretty">
-                Our curated marketplace offers premium blocks and templates designed to save time and ensure consistency across your admin projects.
+                Better Auth handles email/password, magic links, social OAuth, and password resets. Organizations with member invites and role management are built in.
               </p>
             </div>
 
@@ -111,15 +112,16 @@ export function FeaturesSection() {
             </ul>
 
             <div className="flex flex-col sm:flex-row gap-4 pe-4 pt-2">
-              <Button size="lg" className="cursor-pointer">
-                <a href="#" className='flex items-center'>
-                  Browse Templates
+              <Button size="lg" className="cursor-pointer" asChild>
+                <a href="/sign-up" className='flex items-center'>
+                  Get Started
                   <ArrowRight className="ms-2 size-4" aria-hidden="true" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="cursor-pointer">
-                <a href="#">
-                  View Components
+              <Button size="lg" variant="outline" className="cursor-pointer" asChild>
+                <a href="https://fluxkit.dev/docs" target="_blank" rel="noopener noreferrer">
+                  <Code2 className="mr-2 size-4" />
+                  View Docs
                 </a>
               </Button>
             </div>
@@ -132,10 +134,10 @@ export function FeaturesSection() {
           <div className="space-y-6 order-2 lg:order-1">
             <div className="space-y-4">
               <h3 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
-                Built for modern development workflows
+                Billing, email & monitoring included
               </h3>
               <p className="text-muted-foreground text-base text-pretty">
-                Every component follows best practices with TypeScript, responsive design, and clean code architecture that integrates seamlessly into your projects.
+                Polar handles subscriptions and checkout. Brevo sends transactional emails. Sentry catches errors. Upstash Redis rate-limits your APIs. All pre-configured.
               </p>
             </div>
 
@@ -154,14 +156,14 @@ export function FeaturesSection() {
             </ul>
 
             <div className="flex flex-col sm:flex-row gap-4 pe-4 pt-2">
-              <Button size="lg" className="cursor-pointer">
-                <a href="#" className='flex items-center'>
+              <Button size="lg" className="cursor-pointer" asChild>
+                <a href="https://fluxkit.dev/docs" target="_blank" rel="noopener noreferrer" className='flex items-center'>
                   View Documentation
                   <ArrowRight className="ms-2 size-4" aria-hidden="true" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" className="cursor-pointer">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline" className="cursor-pointer" asChild>
+                <a href="https://github.com/get-convex/convex-shipfast" target="_blank" rel="noopener noreferrer">
                   GitHub Repository
                 </a>
               </Button>
@@ -172,7 +174,7 @@ export function FeaturesSection() {
           <Image3D
             lightSrc="/feature-2-light.png"
             darkSrc="/feature-2-dark.png"
-            alt="Performance dashboard"
+            alt="Billing and monitoring dashboard"
             direction="right"
             className="order-1 lg:order-2"
           />

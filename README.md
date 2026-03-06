@@ -1,4 +1,4 @@
-# Convex ShipFast
+# FluxKit
 
 A production-ready SaaS boilerplate built with modern technologies to help you ship your product faster. Built with Next.js 16, React 19, Convex, Better Auth, and shadcn/ui.
 

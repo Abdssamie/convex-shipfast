@@ -1,4 +1,5 @@
 export const siteConfig = {
-  name: "Convex ShipFast",
-  tagline: "Production-ready SaaS boilerplate",
+  name: "FluxKit",
+  tagline: "Ship faster with Convex",
+  url: "https://fluxkit.dev",
 } as const;

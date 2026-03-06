@@ -15,39 +15,39 @@ type FaqItem = {
 const faqItems: FaqItem[] = [
   {
     value: 'item-1',
-    question: 'How do I integrate these components into my project?',
+    question: 'How do I get started with FluxKit?',
     answer:
-      'Integration is simple! All our components are built with shadcn/ui and work with React, Next.js, and Vite. Just copy the component code, install any required dependencies, and paste it into your project. Each component comes with detailed installation instructions and examples.',
+      'Clone the repository, run `bun install`, copy `.env.example` to `.env.local`, fill in your credentials, then run `bunx convex dev` and `bun dev` in separate terminals. You\'ll have a fully working SaaS app running locally within minutes.',
   },
   {
     value: 'item-2',
-    question: 'What\'s the difference between free and premium components?',
+    question: 'What backend does FluxKit use, and why Convex?',
     answer:
-      'Free components include essential UI elements like buttons, forms, and basic layouts. Premium components offer advanced features like complex data tables, analytics dashboards, authentication flows, and complete admin templates. Premium also includes Figma files, priority support, and commercial licenses.',
+      'FluxKit uses Convex as its serverless backend. Convex gives you real-time reactive queries, automatic database management, and TypeScript functions — no REST endpoints or GraphQL schema to write. Your UI automatically stays in sync with data changes without polling.',
   },
   {
     value: 'item-3',
-    question: 'Can I use these components in commercial projects?',
+    question: 'Does FluxKit include authentication and multi-tenancy?',
     answer:
-      'Yes! Free components come with an MIT license for unlimited use. Premium components include a commercial license that allows usage in client projects, SaaS applications, and commercial products without attribution requirements.',
+      'Yes. Authentication is handled by Better Auth with support for email/password, magic links, social OAuth, and password resets. Organizations and team management are built in — you can invite members, assign roles, and handle multi-tenant data isolation out of the box.',
   },
   {
     value: 'item-4',
-    question: 'Do you provide support and updates?',
+    question: 'Is billing and payments included?',
     answer:
-      'Absolutely! We provide community support for free components through our Discord server and GitHub issues. Premium subscribers get priority email support, regular component updates, and early access to new releases. We also maintain compatibility with the latest shadcn/ui versions.',
+      'Yes. FluxKit integrates with Polar for subscription billing and payment flows. You get subscription management, usage tracking, and checkout sessions wired up. Configure your Polar API key in your environment variables and you\'re ready to charge customers.',
   },
   {
     value: 'item-5',
-    question: 'What frameworks and tools do you support?',
+    question: 'What is the full tech stack?',
     answer:
-      'Our components work with React 18+, Next.js 13+, and Vite. We use TypeScript, Tailwind CSS, and follow shadcn/ui conventions. Components are tested with popular tools like React Hook Form, TanStack Query, and Zustand for state management.',
+      'FluxKit is built with Next.js 16, React 19, Convex (backend), Better Auth (authentication), Polar (billing), Brevo (transactional email), shadcn/ui + Tailwind CSS 4 (UI), Sentry (error monitoring), Upstash Redis (rate limiting), and TypeScript throughout. All packages are managed with Bun.',
   },
   {
     value: 'item-6',
-    question: 'How often do you release new components?',
+    question: 'Can I use FluxKit in commercial projects?',
     answer:
-      'We release new components and templates weekly. Premium subscribers get early access to new releases, while free components are updated regularly based on community feedback. You can track our roadmap and request specific components through our GitHub repository.',
+      'Absolutely. FluxKit is MIT licensed — use it freely in personal projects, client work, or commercial SaaS products with no attribution required. You own your code completely.',
   },
 ]
 
@@ -62,7 +62,7 @@ const FaqSection = () => {
             Frequently Asked Questions
           </h2>
           <p className="text-lg text-muted-foreground">
-            Everything you need to know about {siteConfig.name} components, licensing, and integration. Still have questions? We&apos;re here to help!
+            Everything you need to know about {siteConfig.name}. Still have questions? We&apos;re here to help!
           </p>
         </div>
 

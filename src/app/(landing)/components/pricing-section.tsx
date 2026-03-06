@@ -9,34 +9,34 @@ import { useState } from 'react'
 const plans = [
   {
     name: 'Free',
-    description: 'Perfect for getting started with essential components',
+    description: 'Full access to the open-source boilerplate via GitHub',
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      'Access to 50+ free components',
-      'Basic dashboard templates',
-      'Community support',
-      'GitHub repository access',
-      'Documentation and guides'
+      'Full source code access (MIT license)',
+      'All integrations included',
+      'Community support via GitHub',
+      'Self-deploy to Vercel, Railway, etc.',
+      'Regular open-source updates'
     ],
     cta: 'Get Started',
     popular: false
   },
   {
     name: 'Pro',
-    description: 'For developers who need premium templates and components',
+    description: 'For developers who want priority support and exclusive extras',
     monthlyPrice: 19,
     yearlyPrice: 15,
     features: [
-      'Premium template collection',
-      'Advanced dashboard layouts',
-      'Priority support',
-      'Commercial use license',
-      'Early access to new releases',
-      'Figma design files',
-      'Custom component requests',
+      'Everything in Free',
+      'Priority email support',
+      'Private Discord channel',
+      'Early access to new features',
+      'Setup and configuration help',
+      'Code review assistance',
+      'Migration guidance',
       'Direct developer access',
-      'Exclusive design resources'
+      'Exclusive updates & changelogs'
     ],
     cta: 'Get Started',
     popular: true,
@@ -44,18 +44,17 @@ const plans = [
   },
   {
     name: 'Lifetime',
-    description: 'One-time payment for lifetime access to everything',
+    description: 'One-time payment for lifetime Pro access',
     monthlyPrice: 299,
     yearlyPrice: 299,
     features: [
-      'Lifetime updates and support',
-      'Private Discord channel',
+      'Lifetime Pro support',
+      'VIP priority support',
       'No recurring fees ever',
-      'Future template access',
-      'VIP support priority',
-      'Exclusive beta features'
+      'All future updates included',
+      'Private Discord — forever'
     ],
-    cta: 'Get Started',
+    cta: 'Get Lifetime',
     popular: false,
     includesPrevious: 'All Pro features, plus'
   }
@@ -112,11 +111,10 @@ export function PricingSection() {
               {plans.map((plan, index) => (
                 <div
                   key={index}
-                  className={`p-8 grid grid-rows-subgrid row-span-4 gap-6 ${
-                    plan.popular
+                  className={`p-8 grid grid-rows-subgrid row-span-4 gap-6 ${plan.popular
                       ? 'my-2 mx-4 rounded-xl bg-card border-transparent shadow-xl ring-1 ring-foreground/10 backdrop-blur'
                       : ''
-                  }`}
+                    }`}
                 >
                   {/* Plan Header */}
                   <div>
@@ -143,11 +141,10 @@ export function PricingSection() {
                   {/* CTA Button */}
                   <div>
                     <Button
-                      className={`w-full cursor-pointer my-2 ${
-                        plan.popular
+                      className={`w-full cursor-pointer my-2 ${plan.popular
                           ? 'shadow-md border-[0.5px] border-white/25 shadow-black/20 bg-primary ring-1 ring-primary/15 text-primary-foreground hover:bg-primary/90'
                           : 'shadow-sm shadow-black/15 border border-transparent bg-background ring-1 ring-foreground/10 hover:bg-muted/50'
-                      }`}
+                        }`}
                       variant={plan.popular ? 'default' : 'secondary'}
                     >
                       {plan.cta}

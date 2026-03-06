@@ -4,29 +4,29 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { CardDecorator } from '@/components/ui/card-decorator'
-import { Github, Code, Palette, Layout, Crown } from 'lucide-react'
+import { Github, Zap, ShieldCheck, Database, Code2 } from 'lucide-react'
 import { siteConfig } from '@/config/site'
 
 const values = [
   {
-    icon: Code,
+    icon: Code2,
     title: 'Developer First',
-    description: 'Every component is built with the developer experience in mind, ensuring clean code and easy integration.'
+    description: 'Every decision is made with DX in mind — TypeScript throughout, clean structure, and zero magic.'
   },
   {
-    icon: Palette,
-    title: 'Design Excellence',
-    description: 'We maintain the highest design standards, following shadcn/ui principles and modern UI patterns.'
+    icon: ShieldCheck,
+    title: 'Auth You Can Trust',
+    description: 'Better Auth gives you a battle-tested authentication system with email, OAuth, and magic links.'
   },
   {
-    icon: Layout,
+    icon: Database,
+    title: 'Real-time Backend',
+    description: 'Convex powers a reactive serverless backend — your UI stays in sync automatically.'
+  },
+  {
+    icon: Zap,
     title: 'Production Ready',
-    description: 'Battle-tested components used in real applications with proven performance and reliability across different environments.'
-  },
-  {
-    icon: Crown,
-    title: 'Premium Quality',
-    description: 'Hand-crafted with attention to detail and performance optimization, ensuring exceptional user experience and accessibility.'
+    description: 'Ships with Sentry, rate limiting, transactional email, and billing pre-configured.'
   }
 ]
 
@@ -40,11 +40,11 @@ export function AboutSection() {
             About {siteConfig.name}
           </Badge>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
-            Built for developers, by developers
+            Built by developers, for developers
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            We&apos;re passionate about creating the best platform for modern components and templates.
-            Our mission is to accelerate development and help developers build beautiful admin interfaces faster.
+            FluxKit is an opinionated SaaS starter kit that eliminates the setup tax.
+            We&apos;ve made the hard choices so you can focus on what makes your product unique.
           </p>
         </div>
 
@@ -68,7 +68,7 @@ export function AboutSection() {
         {/* Call to Action */}
         <div className="mt-16 text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <span className="text-muted-foreground">❤️ Made with love for the developer community</span>
+            <span className="text-muted-foreground">❤️ Open source — MIT licensed, free forever</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="cursor-pointer" asChild>
@@ -78,8 +78,8 @@ export function AboutSection() {
               </a>
             </Button>
             <Button size="lg" variant="outline" className="cursor-pointer" asChild>
-              <a href="https://discord.com/invite/XEQhPc9a6p" target="_blank" rel="noopener noreferrer">
-                Join Discord Community
+              <a href="https://fluxkit.dev/docs" target="_blank" rel="noopener noreferrer">
+                Read the Docs
               </a>
             </Button>
           </div>
