@@ -18,14 +18,7 @@ export function HeroSection() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="mx-auto max-w-4xl text-center">
-          {/* Announcement Badge */}
-          <div className="mb-8 flex justify-center">
-            <Badge variant="outline" className="px-4 py-2 border-foreground">
-              <Star className="w-3 h-3 mr-2 fill-current" />
-              Production-ready Convex boilerplate
-              <ArrowRight className="w-3 h-3 ml-2" />
-            </Badge>
-          </div>
+
 
           {/* Main Headline */}
           <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
@@ -49,12 +42,6 @@ export function HeroSection() {
                 Get Started Free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="text-base cursor-pointer" asChild>
-              <a href="https://github.com/get-convex/convex-shipfast" target="_blank" rel="noopener noreferrer">
-                <Github className="mr-2 h-4 w-4" />
-                View on GitHub
-              </a>
             </Button>
           </div>
         </div>

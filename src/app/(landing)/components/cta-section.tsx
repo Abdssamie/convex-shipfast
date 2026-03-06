@@ -17,15 +17,10 @@ export function CTASection() {
               <div className='flex flex-col items-center gap-4'>
                 <Badge variant='outline' className='flex items-center gap-2'>
                   <Rocket className='size-3' />
-                  Open Source Boilerplate
+                  Production-Ready SaaS Subsystem
                 </Badge>
 
                 <div className='text-muted-foreground flex items-center gap-4 text-sm'>
-                  <span className='flex items-center gap-1'>
-                    <div className='size-2 rounded-full bg-green-500' />
-                    MIT Licensed
-                  </span>
-                  <Separator orientation='vertical' className='!h-4' />
                   <span>10+ Integrations</span>
                   <Separator orientation='vertical' className='!h-4' />
                   <span>100% TypeScript</span>
@@ -49,7 +44,7 @@ export function CTASection() {
 
                 <p className='text-muted-foreground mx-auto max-w-2xl text-balance lg:text-xl'>
                   Stop spending weeks on auth, billing, and infrastructure.
-                  FluxKit gives you a production-ready Convex + Next.js boilerplate so you can ship on day one.
+                  FluxKit gives you a production-ready Convex + Next.js app so you can ship on day one.
                 </p>
               </div>
 
@@ -61,21 +56,10 @@ export function CTASection() {
                     Get Started Free
                   </Link>
                 </Button>
-                <Button variant='outline' size='lg' className='cursor-pointer px-8 py-6 text-lg font-medium group' asChild>
-                  <a href='https://github.com/get-convex/convex-shipfast' target='_blank' rel='noopener noreferrer'>
-                    <Github className='me-2 size-5' />
-                    View on GitHub
-                    <ArrowRight className='ms-2 size-4 transition-transform group-hover:translate-x-1' />
-                  </a>
-                </Button>
               </div>
 
               {/* Trust Indicators */}
               <div className='text-muted-foreground flex flex-wrap items-center justify-center gap-6 text-sm'>
-                <div className='flex items-center gap-2'>
-                  <div className='size-2 rounded-full bg-green-600 dark:bg-green-400 me-1' />
-                  <span>MIT licensed, free forever</span>
-                </div>
                 <div className='flex items-center gap-2'>
                   <div className='size-2 rounded-full bg-blue-600 dark:bg-blue-400 me-1' />
                   <span>Powered by Convex</span>

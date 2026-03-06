@@ -93,25 +93,6 @@ export function ContactSection() {
             <Card className="hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Github className="h-5 w-5 text-primary" />
-                  GitHub Issues
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-3">
-                  Report bugs, request features, or contribute to our open source repository.
-                </p>
-                <Button variant="outline" size="sm" className="cursor-pointer" asChild>
-                  <a href="https://github.com/get-convex/convex-shipfast/issues" target="_blank" rel="noopener noreferrer">
-                    View on GitHub
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
                   <BookOpen className="h-5 w-5 text-primary" />
                   Documentation
                 </CardTitle>

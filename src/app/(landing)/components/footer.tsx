@@ -53,7 +53,6 @@ const footerLinks = {
 
 const socialLinks = [
   { name: 'Twitter', href: '#', icon: Twitter },
-  { name: 'GitHub', href: 'https://github.com/get-convex/convex-shipfast', icon: Github },
   { name: 'LinkedIn', href: '#', icon: Linkedin },
   { name: 'YouTube', href: '#', icon: Youtube },
 ]

@@ -41,13 +41,7 @@ const faqItems: FaqItem[] = [
     value: 'item-5',
     question: 'What is the full tech stack?',
     answer:
-      'FluxKit is built with Next.js 16, React 19, Convex (backend), Better Auth (authentication), Polar (billing), Brevo (transactional email), shadcn/ui + Tailwind CSS 4 (UI), Sentry (error monitoring), Upstash Redis (rate limiting), and TypeScript throughout. All packages are managed with Bun.',
-  },
-  {
-    value: 'item-6',
-    question: 'Can I use FluxKit in commercial projects?',
-    answer:
-      'Absolutely. FluxKit is MIT licensed — use it freely in personal projects, client work, or commercial SaaS products with no attribution required. You own your code completely.',
+      'FluxKit is built with Next.js 16, React 19, Convex (backend), Better Auth (authentication), Polar (billing), Resend or Brevo (transactional email), shadcn/ui + Tailwind CSS 4 (UI), Sentry (error monitoring), Upstash Redis (rate limiting), and TypeScript throughout. All packages are managed with Bun.',
   },
 ]
 

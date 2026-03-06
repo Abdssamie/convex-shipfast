@@ -9,15 +9,14 @@ import { useState } from 'react'
 const plans = [
   {
     name: 'Free',
-    description: 'Full access to the open-source boilerplate via GitHub',
+    description: 'Get started with limited features and community support',
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      'Full source code access (MIT license)',
-      'All integrations included',
-      'Community support via GitHub',
+      'Basic features included',
+      'Community support via Discord',
       'Self-deploy to Vercel, Railway, etc.',
-      'Regular open-source updates'
+      'Regular platform updates'
     ],
     cta: 'Get Started',
     popular: false
@@ -112,8 +111,8 @@ export function PricingSection() {
                 <div
                   key={index}
                   className={`p-8 grid grid-rows-subgrid row-span-4 gap-6 ${plan.popular
-                      ? 'my-2 mx-4 rounded-xl bg-card border-transparent shadow-xl ring-1 ring-foreground/10 backdrop-blur'
-                      : ''
+                    ? 'my-2 mx-4 rounded-xl bg-card border-transparent shadow-xl ring-1 ring-foreground/10 backdrop-blur'
+                    : ''
                     }`}
                 >
                   {/* Plan Header */}
@@ -142,8 +141,8 @@ export function PricingSection() {
                   <div>
                     <Button
                       className={`w-full cursor-pointer my-2 ${plan.popular
-                          ? 'shadow-md border-[0.5px] border-white/25 shadow-black/20 bg-primary ring-1 ring-primary/15 text-primary-foreground hover:bg-primary/90'
-                          : 'shadow-sm shadow-black/15 border border-transparent bg-background ring-1 ring-foreground/10 hover:bg-muted/50'
+                        ? 'shadow-md border-[0.5px] border-white/25 shadow-black/20 bg-primary ring-1 ring-primary/15 text-primary-foreground hover:bg-primary/90'
+                        : 'shadow-sm shadow-black/15 border border-transparent bg-background ring-1 ring-foreground/10 hover:bg-muted/50'
                         }`}
                       variant={plan.popular ? 'default' : 'secondary'}
                     >

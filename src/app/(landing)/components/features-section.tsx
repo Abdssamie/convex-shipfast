@@ -48,7 +48,7 @@ const secondaryFeatures = [
   {
     icon: Mail,
     title: 'Transactional Email',
-    description: 'Brevo integration for verification, magic links, invitations, and password resets.'
+    description: 'Resend or Brevo integration for verification, magic links, invitations, and password resets.'
   },
   {
     icon: Activity,
@@ -137,7 +137,7 @@ export function FeaturesSection() {
                 Billing, email & monitoring included
               </h3>
               <p className="text-muted-foreground text-base text-pretty">
-                Polar handles subscriptions and checkout. Brevo sends transactional emails. Sentry catches errors. Upstash Redis rate-limits your APIs. All pre-configured.
+                Polar handles subscriptions and checkout. Resend or Brevo sends transactional emails. Sentry catches errors. Upstash Redis rate-limits your APIs. All pre-configured.
               </p>
             </div>
 
@@ -160,11 +160,6 @@ export function FeaturesSection() {
                 <a href="https://fluxkit.dev/docs" target="_blank" rel="noopener noreferrer" className='flex items-center'>
                   View Documentation
                   <ArrowRight className="ms-2 size-4" aria-hidden="true" />
-                </a>
-              </Button>
-              <Button size="lg" variant="outline" className="cursor-pointer" asChild>
-                <a href="https://github.com/get-convex/convex-shipfast" target="_blank" rel="noopener noreferrer">
-                  GitHub Repository
                 </a>
               </Button>
             </div>

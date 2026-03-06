@@ -9,7 +9,7 @@ const description = `${siteConfig.tagline}.`
 export const metadata: Metadata = {
   title,
   description,
-  keywords: ['saas boilerplate', 'react', 'nextjs', 'typescript', 'tailwind css'],
+  keywords: ['saas', 'react', 'nextjs', 'typescript', 'tailwind css'],
   openGraph: {
     title,
     description,

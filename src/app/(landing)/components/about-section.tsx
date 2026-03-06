@@ -67,17 +67,8 @@ export function AboutSection() {
 
         {/* Call to Action */}
         <div className="mt-16 text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <span className="text-muted-foreground">❤️ Open source — MIT licensed, free forever</span>
-          </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="cursor-pointer" asChild>
-              <a href="https://github.com/get-convex/convex-shipfast" target="_blank" rel="noopener noreferrer">
-                <Github className="mr-2 h-4 w-4" />
-                Star on GitHub
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" className="cursor-pointer" asChild>
               <a href="https://fluxkit.dev/docs" target="_blank" rel="noopener noreferrer">
                 Read the Docs
               </a>

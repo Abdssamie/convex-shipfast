@@ -41,7 +41,7 @@ export function SidebarNotification() {
             </div>
           </h3>
           <p className="text-sm text-muted-foreground dark:text-neutral-400 leading-relaxed">
-            Your production-ready Convex + Next.js boilerplate.{" "}
+            Your production-ready Convex + Next.js platform.{" "}
             <a
               href="https://fluxkit.dev/docs"
               target="_blank"
