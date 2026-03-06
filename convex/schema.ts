@@ -69,30 +69,6 @@ export default defineSchema({
     .index("by_priority", ["priority"])
     .index("by_category", ["category"]),
 
-  events: defineTable({
-    title: v.string(),
-    date: v.number(), // timestamp
-    time: v.string(),
-    duration: v.string(),
-    type: v.union(
-      v.literal("meeting"),
-      v.literal("event"),
-      v.literal("personal"),
-      v.literal("task"),
-      v.literal("reminder")
-    ),
-    attendees: v.array(v.string()),
-    location: v.string(),
-    color: v.string(),
-    description: v.optional(v.string()),
-    userId: v.string(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_user", ["userId"])
-    .index("by_date", ["date"])
-    .index("by_type", ["type"]),
-
   notifications: defineTable({
     userId: v.string(),
     type: v.union(
